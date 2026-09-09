@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,142 +10,562 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 
+
 <body>
 
-    <img
-    src="assets/auto.png"
-    alt=""
-    class="car-decoration">
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
 
-  <!-- ENCABEZADO ARRANKAR -->
   <header class="site-header">
 
     <div class="brand">
+
       <img
         src="assets/logo-arrankar.png"
         alt="Arrankar"
       >
+
     </div>
 
+
     <div class="header-message">
-      <span>Tu próximo auto, más cerca</span>
+
+      <span>
+        Tu próximo auto, más cerca
+      </span>
+
     </div>
 
   </header>
 
 
 
+  <!-- =====================================================
+       CONTENIDO PRINCIPAL
+  ====================================================== -->
 
-  <!-- CONTENIDO -->
   <main class="app">
 
-    <!-- Elementos decorativos -->
+    <!-- Decoraciones -->
+
     <div class="decorative-circle circle-left"></div>
+
     <div class="decorative-circle circle-right"></div>
 
-    <section class="card">
 
-      <!-- PROGRESO -->
-      <div class="progress">
+    <!-- ===================================================
+         CONTENEDOR DE LA PÁGINA
+    ==================================================== -->
 
-        <div class="steps">
+    <div class="page-content">
 
-          <div class="step active">
-            <span class="step-number">1</span>
-            <span class="step-label">Historial crediticio</span>
+
+      <!-- =================================================
+           TARJETA DEL FORMULARIO
+      ================================================== -->
+
+      <section class="card">
+
+
+        <!-- ===============================================
+             PROGRESO
+        ================================================ -->
+
+        <div class="progress">
+
+          <div class="steps">
+
+
+            <!-- Paso 1 -->
+
+            <div class="step">
+
+              <span class="step-number">
+                1
+              </span>
+
+              <span class="step-label">
+                Simulación
+              </span>
+
+            </div>
+
+
+            <!-- Paso 2 -->
+
+            <div class="step">
+
+              <span class="step-number">
+                2
+              </span>
+
+              <span class="step-label">
+                Vehículo
+              </span>
+
+            </div>
+
+
+            <!-- Paso 3 -->
+
+            <div class="step">
+
+              <span class="step-number">
+                3
+              </span>
+
+              <span class="step-label">
+                Financiación
+              </span>
+
+            </div>
+
+
+            <!-- Paso 4 -->
+
+            <div class="step">
+
+              <span class="step-number">
+                4
+              </span>
+
+              <span class="step-label">
+                Perfil
+              </span>
+
+            </div>
+
+
+            <!-- Paso 5 -->
+
+            <div class="step">
+
+              <span class="step-number">
+                5
+              </span>
+
+              <span class="step-label">
+                Precalificación
+              </span>
+
+            </div>
+
+
+            <!-- Paso 6 -->
+
+            <div class="step">
+
+              <span class="step-number">
+                6
+              </span>
+
+              <span class="step-label">
+                Resultado
+              </span>
+
+            </div>
+
           </div>
 
-          <div class="step">
-            <span class="step-number">2</span>
-            <span class="step-label">Actividad laboral</span>
+
+          <!-- Barra -->
+
+          <div class="progress-bar">
+
+            <div id="progressFill"></div>
+
           </div>
 
-          <div class="step">
-            <span class="step-number">3</span>
-            <span class="step-label">Antigüedad</span>
+
+          <!-- Texto -->
+
+          <span id="progressText">
+            Inicio
+          </span>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PANTALLA DINÁMICA DEL FORMULARIO
+        ================================================== -->
+
+        <div id="screen"></div>
+
+
+
+        <!-- =================================================
+             BOTONES
+        ================================================== -->
+
+        <div class="actions">
+
+
+          <!-- Volver -->
+
+          <button
+            id="backBtn"
+            class="btn secondary"
+            type="button"
+            hidden
+          >
+
+            ← Volver
+
+          </button>
+
+
+          <!-- Continuar -->
+
+          <button
+            id="nextBtn"
+            class="btn primary"
+            type="button"
+          >
+
+            Comenzar →
+
+          </button>
+
+        </div>
+
+
+      </section>
+
+
+
+      <!-- =================================================
+           INFORMACIÓN DE ARRANKAR
+           
+           Esta sección está FUERA de la tarjeta.
+           Aparece debajo del formulario y continúa
+           con el scroll de la página.
+      ================================================== -->
+
+      <section class="info-section">
+
+
+        <!-- =================================================
+             BENEFICIOS
+        ================================================== -->
+
+        <div class="info-block benefits-section">
+
+
+          <div class="info-heading">
+
+            <span class="info-eyebrow">
+              ARRANKAR
+            </span>
+
+            <h2>
+              Beneficios de financiar tu vehículo
+            </h2>
+
+            <p>
+              Conoce las ventajas de realizar tu proceso
+              de financiación de manera digital.
+            </p>
+
           </div>
 
-          <div class="step">
-            <span class="step-number">4</span>
-            <span class="step-label">Ingresos</span>
-          </div>
 
-          <div class="step">
-            <span class="step-number">5</span>
-            <span class="step-label">Vehículo</span>
-          </div>
 
-          <div class="step">
-            <span class="step-number">6</span>
-            <span class="step-label">Resultado</span>
+          <div class="benefits-grid">
+
+
+            <!-- Beneficio 1 -->
+
+            <article class="benefit-card">
+
+              <div class="benefit-icon">
+                ✓
+              </div>
+
+              <div class="benefit-content">
+
+                <h3>
+                  Simulación rápida
+                </h3>
+
+                <p>
+                  Conoce de manera sencilla una referencia
+                  del valor que podrías financiar y de tu
+                  cuota mensual.
+                </p>
+
+              </div>
+
+            </article>
+
+
+
+            <!-- Beneficio 2 -->
+
+            <article class="benefit-card">
+
+              <div class="benefit-icon">
+                ✓
+              </div>
+
+              <div class="benefit-content">
+
+                <h3>
+                  Proceso digital
+                </h3>
+
+                <p>
+                  Inicia tu solicitud en línea y avanza
+                  por el proceso de manera rápida y sencilla.
+                </p>
+
+              </div>
+
+            </article>
+
+
+
+            <!-- Beneficio 3 -->
+
+            <article class="benefit-card">
+
+              <div class="benefit-icon">
+                ✓
+              </div>
+
+              <div class="benefit-content">
+
+                <h3>
+                  Acompañamiento
+                </h3>
+
+                <p>
+                  Te orientamos durante las diferentes
+                  etapas de tu solicitud de financiación.
+                </p>
+
+              </div>
+
+            </article>
+
+
+
+            <!-- Beneficio 4 -->
+
+            <article class="benefit-card">
+
+              <div class="benefit-icon">
+                ✓
+              </div>
+
+              <div class="benefit-content">
+
+                <h3>
+                  Opciones de financiación
+                </h3>
+
+                <p>
+                  Revisa diferentes alternativas de
+                  financiación de acuerdo con tu perfil
+                  y las condiciones de la solicitud.
+                </p>
+
+              </div>
+
+            </article>
+
+
           </div>
 
         </div>
 
-        <div class="progress-bar">
-          <div id="progressFill"></div>
+
+
+        <!-- =================================================
+             REQUISITOS
+        ================================================== -->
+
+        <div class="info-block requirements-section">
+
+
+          <div class="info-heading">
+
+            <span class="info-eyebrow">
+              ANTES DE COMENZAR
+            </span>
+
+            <h2>
+              ¿Qué necesitas?
+            </h2>
+
+            <p>
+              Ten a la mano la información básica necesaria
+              para iniciar tu proceso.
+            </p>
+
+          </div>
+
+
+
+          <div class="requirements-list">
+
+
+            <!-- Requisito 1 -->
+
+            <div class="requirement-item">
+
+              <span class="requirement-number">
+                01
+              </span>
+
+              <div>
+
+                <h3>
+                  Ser mayor de edad
+                </h3>
+
+                <p>
+                  Debes contar con la mayoría de edad
+                  para iniciar la solicitud.
+                </p>
+
+              </div>
+
+            </div>
+
+
+
+            <!-- Requisito 2 -->
+
+            <div class="requirement-item">
+
+              <span class="requirement-number">
+                02
+              </span>
+
+              <div>
+
+                <h3>
+                  Contar con ingresos demostrables
+                </h3>
+
+                <p>
+                  Necesitaremos conocer tus ingresos
+                  mensuales para realizar la precalificación.
+                </p>
+
+              </div>
+
+            </div>
+
+
+
+            <!-- Requisito 3 -->
+
+            <div class="requirement-item">
+
+              <span class="requirement-number">
+                03
+              </span>
+
+              <div>
+
+                <h3>
+                  Tener información del vehículo
+                </h3>
+
+                <p>
+                  Ten disponible el valor aproximado,
+                  tipo y condiciones del vehículo que
+                  deseas financiar.
+                </p>
+
+              </div>
+
+            </div>
+
+
+
+            <!-- Requisito 4 -->
+
+            <div class="requirement-item">
+
+              <span class="requirement-number">
+                04
+              </span>
+
+              <div>
+
+                <h3>
+                  Información personal básica
+                </h3>
+
+                <p>
+                  Durante el proceso te solicitaremos
+                  algunos datos personales y de tu actividad.
+                </p>
+
+              </div>
+
+            </div>
+
+
+          </div>
+
         </div>
 
-        <span id="progressText">Inicio</span>
 
-      </div>
-
-
-      <!-- PREGUNTAS -->
-      <div id="screen"></div>
+      </section>
 
 
-      <!-- BOTONES -->
-      <div class="actions">
-
-        <button
-          id="backBtn"
-          class="btn secondary"
-          type="button"
-          hidden
-        >
-          ← Volver
-        </button>
-
-        <button
-          id="nextBtn"
-          class="btn primary"
-          type="button"
-        >
-          Comenzar →
-        </button>
-
-      </div>
-
-    </section>
-
+    </div>
 
   </main>
 
 
-  <!-- PIE -->
+
+  <!-- =====================================================
+       FOOTER
+  ====================================================== -->
+
   <footer class="site-footer">
 
+
     <div class="footer-brand">
+
       <img
         src="assets/logo-arrankar.png"
         alt="Arrankar"
       >
+
     </div>
+
 
     <span>
       Soluciones de movilidad y financiamiento
     </span>
 
+
     <span>
       Proceso 100% seguro
     </span>
 
+
   </footer>
 
 
+
+  <!-- =====================================================
+       JAVASCRIPT
+  ====================================================== -->
+
   <script src="js/questions.js"></script>
+
   <script src="js/app.js"></script>
 
+
 </body>
+
 </html>

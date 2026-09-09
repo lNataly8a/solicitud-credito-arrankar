@@ -1,5 +1,6 @@
 /* =========================================================
-   CSS COMPLETO
+   ARRANKAR
+   CSS PRINCIPAL
 ========================================================= */
 
 
@@ -22,7 +23,6 @@
   --line: #dce7f0;
 
   --background: #f8fbfd;
-
   --white: #ffffff;
 }
 
@@ -35,114 +35,63 @@
   box-sizing: border-box;
 }
 
-html, body {
+
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100%;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
   color: var(--text);
   overflow-x: hidden;
-  overflow-y: visible; 
+  overflow-y: auto;
 }
 
-
-/* =========================================================
-   BODY
-========================================================= */
-
 body {
-
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background:
-
     radial-gradient(
-      circle at 5% 55%,
-      rgba(8, 199, 221, 0.08),
-      transparent 230px
+      circle at 0% 35%,
+      rgba(8, 199, 221, 0.10),
+      transparent 330px
     ),
-
     radial-gradient(
-      circle at 97% 80%,
-      rgba(8, 199, 221, 0.07),
-      transparent 270px
+      circle at 100% 75%,
+      rgba(16, 43, 85, 0.045),
+      transparent 360px
     ),
-
     linear-gradient(
       135deg,
       #ffffff 0%,
-      #f8fbfd 100%
+      #f7fafc 55%,
+      #f2f7fa 100%
     );
 }
 
-/* =========================================================
-   AUTO DECORATIVO 
-========================================================= */
 
-.car-decoration {
-  position: fixed;
-  left: -141px;
-  top: 190px; 
-  width: 500px;
-  height: auto;
-  z-index: 1;
-  pointer-events: none;
+button,
+input {
+  font-family: inherit;
 }
 
-
-/* =========================================================
-   EL FORMULARIO SIEMPRE POR ENCIMA DEL AUTO
-   ========================================================= */
-
-.card,
-#screen,
-header,
-footer {
-    position: relative;
-    z-index: 2;
-}
-
-main {
-    z-index: auto;
-}
-
-
-/* =========================================================
-   TABLET
-   ========================================================= */
-
-@media (max-width: 1000px) {
-
-    .car-decoration {
-        width: 400px;
-        left: -110px;
-    }
-}
-
-
-/* =========================================================
-   CELULAR
-   ========================================================= */
-
-@media (max-width: 700px) {
-
-    .car-decoration {
-        display: none;
-    }
-}
 
 /* =========================================================
    HEADER
 ========================================================= */
 
 .site-header {
-
   width: 100%;
   height: 100px;
 
   padding: 0 7%;
 
   display: flex;
-
   align-items: center;
   justify-content: space-between;
 
@@ -151,8 +100,30 @@ main {
   border-bottom: 1px solid #edf2f6;
 
   position: relative;
-
   z-index: 20;
+
+    background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(248, 251, 253, 0.98) 100%
+    );
+  border-bottom: 1px solid #e5edf3;
+}
+
+.site-header::after {
+  content: "";
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  bottom: -1px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(8, 199, 221, 0.25),
+    transparent
+  );
 }
 
 
@@ -161,16 +132,13 @@ main {
 ========================================================= */
 
 .brand {
-
   display: flex;
-
   align-items: center;
 }
 
+
 .brand img {
-
   width: 140px;
-
   height: auto;
 
   display: block;
@@ -182,7 +150,6 @@ main {
 ========================================================= */
 
 .header-message {
-
   position: relative;
 
   padding-bottom: 9px;
@@ -190,22 +157,19 @@ main {
   color: var(--blue);
 
   font-size: 15px;
-
   font-weight: 500;
 }
 
-.header-message::after {
 
+.header-message::after {
   content: "";
 
   position: absolute;
 
   left: 0;
-
   bottom: 0;
 
   width: 40px;
-
   height: 3px;
 
   border-radius: 10px;
@@ -219,32 +183,35 @@ main {
 ========================================================= */
 
 .app {
-
   width: 100%;
-
-  min-height: calc(100vh - 100px);
-
-  padding: 50px 7%;
-
+  flex: 1 0 auto;
+  padding: 50px 7% 70px;
   display: flex;
-
-  justify-content: center;
-
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
-
   position: relative;
-
   overflow: hidden;
- 
 }
 
 
 /* =========================================================
-   CÍRCULO IZQUIERDO
+   CONTENIDO DE PÁGINA
+========================================================= */
+
+.page-content {
+  width: min(1100px, 100%);
+
+  position: relative;
+  z-index: 5;
+}
+
+
+/* =========================================================
+   CÍRCULO DECORATIVO IZQUIERDO
 ========================================================= */
 
 .circle-left {
-
   position: absolute;
 
   width: 530px;
@@ -262,8 +229,8 @@ main {
   z-index: 0;
 }
 
-.circle-left::after {
 
+.circle-left::after {
   content: "";
 
   position: absolute;
@@ -281,11 +248,10 @@ main {
 
 
 /* =========================================================
-   CÍRCULO DERECHO
+   CÍRCULO DECORATIVO DERECHO
 ========================================================= */
 
 .circle-right {
-
   position: absolute;
 
   width: 480px;
@@ -309,14 +275,11 @@ main {
 ========================================================= */
 
 .card {
-
-  position: relative;
-
-  z-index: 5;
-
   width: min(900px, 100%);
 
   min-height: 500px;
+
+  margin: 0 auto;
 
   padding: 38px 55px 40px;
 
@@ -327,10 +290,11 @@ main {
   border-radius: 22px;
 
   box-shadow:
-
     0 22px 55px rgba(20, 40, 75, 0.07),
-
     0 4px 15px rgba(20, 40, 75, 0.035);
+
+  position: relative;
+  z-index: 5;
 }
 
 
@@ -339,7 +303,6 @@ main {
 ========================================================= */
 
 .progress {
-
   width: 100%;
 
   margin-bottom: 45px;
@@ -353,7 +316,6 @@ main {
 ========================================================= */
 
 .steps {
-
   width: 100%;
 
   display: grid;
@@ -370,19 +332,16 @@ main {
 
 
 /* =========================================================
-   PASO INDIVIDUAL
+   PASO
 ========================================================= */
 
 .step {
-
   min-width: 0;
 
   display: flex;
-
   flex-direction: column;
 
   align-items: center;
-
   justify-content: flex-start;
 
   position: relative;
@@ -390,7 +349,6 @@ main {
   color: #8295aa;
 
   font-size: 11px;
-
   font-weight: 400;
 
   text-align: center;
@@ -398,16 +356,14 @@ main {
 
 
 /* =========================================================
-   CÍRCULO
+   CÍRCULO PASO
 ========================================================= */
 
 .step-number {
-
   width: 32px;
   height: 32px;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 
@@ -420,11 +376,9 @@ main {
   color: var(--blue);
 
   font-size: 13px;
-
   font-weight: 600;
 
   position: relative;
-
   z-index: 10;
 
   transition:
@@ -436,11 +390,10 @@ main {
 
 
 /* =========================================================
-   TEXTO DEL PASO
+   TEXTO PASO
 ========================================================= */
 
 .step-label {
-
   display: block;
 
   margin-top: 12px;
@@ -454,46 +407,40 @@ main {
 
 
 /* =========================================================
-   PASO ACTUAL
+   PASO ACTIVO
 ========================================================= */
 
 .step.active {
-
   color: var(--text);
 
   font-weight: 500;
 }
 
-/* =========================================================
-   PASO ACTUAL
-   El paso en el que estamos todavía permanece blanco
-========================================================= */
 
 .step.active .step-number {
-
   background: #ffffff;
 
-  border-color: #d7e3ed;
+  border-color: var(--cyan);
 
   color: var(--blue);
 
-  box-shadow: none;
+  box-shadow:
+    0 0 0 4px rgba(8, 199, 221, 0.08);
 }
+
 
 /* =========================================================
    PASO COMPLETADO
-   Los pasos que ya terminamos se vuelven azules
 ========================================================= */
 
 .step.completed {
-
   color: var(--cyan-dark);
 
   font-weight: 600;
 }
 
-.step.completed .step-number {
 
+.step.completed .step-number {
   background: var(--cyan);
 
   border-color: var(--cyan);
@@ -510,12 +457,11 @@ main {
 ========================================================= */
 
 .step:not(.active):not(.completed) {
-
   color: #8295aa;
 }
 
-.step:not(.active):not(.completed) .step-number {
 
+.step:not(.active):not(.completed) .step-number {
   background: #ffffff;
 
   border-color: #d7e3ed;
@@ -531,11 +477,9 @@ main {
 ========================================================= */
 
 .progress-bar {
-
   position: absolute;
 
   left: 16px;
-
   right: 16px;
 
   top: 14px;
@@ -552,14 +496,8 @@ main {
 }
 
 
-/* =========================================================
-   BARRA COMPLETADA
-========================================================= */
-
 #progressFill {
-
   width: 0%;
-
   height: 100%;
 
   border-radius: 20px;
@@ -577,11 +515,10 @@ main {
 
 
 /* =========================================================
-   TEXTO DE PROGRESO
+   TEXTO PROGRESO
 ========================================================= */
 
 #progressText {
-
   display: block;
 
   margin-top: 20px;
@@ -589,8 +526,50 @@ main {
   color: var(--text-light);
 
   font-size: 13px;
-
   font-weight: 500;
+}
+
+
+/* =========================================================
+   SCREEN
+========================================================= */
+
+#screen {
+  width: 100%;
+
+  position: relative;
+}
+
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+.intro,
+.question,
+.simulation-result,
+.final-result {
+  width: 100%;
+}
+
+
+/* =========================================================
+   EYEBROW
+========================================================= */
+
+.eyebrow {
+  display: inline-block;
+
+  margin-bottom: 10px;
+
+  color: var(--cyan-dark);
+
+  font-size: 13px;
+  font-weight: 700;
+
+  letter-spacing: 1.5px;
+
+  text-transform: uppercase;
 }
 
 
@@ -599,13 +578,11 @@ main {
 ========================================================= */
 
 h1 {
-
   margin: 0 0 14px;
 
   color: var(--blue);
 
   font-size: 32px;
-
   line-height: 1.2;
 
   font-weight: 700;
@@ -615,13 +592,11 @@ h1 {
 
 
 h2 {
-
   margin: 0 0 14px;
 
   color: var(--blue);
 
   font-size: 28px;
-
   line-height: 1.25;
 
   font-weight: 700;
@@ -630,12 +605,16 @@ h2 {
 }
 
 
+h3 {
+  color: var(--blue);
+}
+
+
 /* =========================================================
    PÁRRAFOS
 ========================================================= */
 
 p {
-
   margin: 0;
 
   color: var(--text-light);
@@ -647,25 +626,88 @@ p {
 
 
 /* =========================================================
-   CONTENEDOR DE PREGUNTAS
+   PUNTOS DE BIENVENIDA
 ========================================================= */
 
-#screen {
-
+.welcome-points {
   width: 100%;
+
+  margin-top: 28px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 15px;
+}
+
+
+.welcome-point {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 13px;
+
+  color: var(--text);
+
+  font-size: 15px;
+
+  line-height: 1.5;
+}
+
+
+.welcome-number {
+  flex-shrink: 0;
+
+  color: var(--cyan-dark);
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  letter-spacing: 1px;
+
+  padding-top: 2px;
+}
+
+
+.prototype-note {
+  margin-top: 22px;
+
+  font-size: 13px;
+
+  line-height: 1.5;
 }
 
 
 /* =========================================================
-   OPCIONES DEL FORMULARIO
+   OPCIONES
 ========================================================= */
 
 .options {
   display: flex;
+
   flex-direction: column;
+
   width: 100%;
+
   gap: 10px;
+
   margin-top: 28px;
+}
+
+
+/* =========================================================
+   OPCIONES DE PLAZO
+========================================================= */
+
+.term-options {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 10px;
 }
 
 
@@ -677,24 +719,27 @@ p {
   position: relative;
 
   display: flex;
+
   align-items: center;
 
   width: 100%;
+
   min-height: 54px;
 
   padding: 0 18px;
 
-  box-sizing: border-box;
-
   border: 1px solid #d9e5ed;
-  border-radius: 8px;
+
+  border-radius: 10px;
 
   background: #ffffff;
 
   color: var(--blue);
 
   font-family: inherit;
+
   font-size: 15px;
+
   font-weight: 400;
 
   text-align: left;
@@ -709,71 +754,10 @@ p {
 
 
 /* =========================================================
-   HOVER
-========================================================= */
-
-.option:hover {
-
-  border-color: #9edee8;
-
-  background: #fbfeff;
-}
-
-/* =========================================================
-   CÍRCULO AL PASAR EL MOUSE
-========================================================= */
-
-.option:hover::before {
-
-  border-color: var(--cyan);
-}
-
-
-/* =========================================================
-   OPCIÓN SELECCIONADA
-========================================================= */
-
-.option.selected {
-
-  border-color: var(--cyan);
-
-  background: #f5fcfd;
-
-  box-shadow:
-    0 2px 8px rgba(0, 180, 210, 0.08);
-
-  font-weight: 600;
-}
-
-/* =========================================================
-   CÍRCULO SELECCIONADO
-========================================================= */
-
-.option.selected::before {
-
-  border-color: var(--cyan);
-
-  background: var(--cyan);
-
-  box-shadow:
-    inset 0 0 0 4px #ffffff;
-}
-
-/* =========================================================
-   QUITAR EL CHECK QUE TENÍAMOS ANTES
-========================================================= */
-
-.option.selected::after {
-
-  content: none;
-}
-
-/* =========================================================
-   CÍRCULO DE LA OPCIÓN
+   CÍRCULO OPCIÓN
 ========================================================= */
 
 .option::before {
-
   content: "";
 
   flex-shrink: 0;
@@ -799,11 +783,54 @@ p {
 
 
 /* =========================================================
+   HOVER
+========================================================= */
+
+.option:hover {
+  border-color: #9edee8;
+
+  background: #fbfeff;
+}
+
+
+.option:hover::before {
+  border-color: var(--cyan);
+}
+
+
+/* =========================================================
+   SELECCIONADO
+========================================================= */
+
+.option.selected {
+  border-color: var(--cyan);
+
+  background: #f5fcfd;
+
+  box-shadow:
+    0 2px 8px rgba(0, 180, 210, 0.08);
+
+  font-weight: 600;
+}
+
+
+.option.selected::before {
+  border-color: var(--cyan);
+
+  background: var(--cyan);
+
+  box-shadow:
+    inset 0 0 0 4px #ffffff;
+}
+
+
+/* =========================================================
    ACCESIBILIDAD
 ========================================================= */
 
-.option:focus-visible {
-
+.option:focus-visible,
+.btn:focus-visible,
+.field input:focus-visible {
   outline: 2px solid var(--cyan);
 
   outline-offset: 2px;
@@ -815,7 +842,6 @@ p {
 ========================================================= */
 
 .field {
-
   width: 100%;
 
   margin-top: 28px;
@@ -823,7 +849,6 @@ p {
 
 
 .field label {
-
   display: block;
 
   margin-bottom: 9px;
@@ -837,7 +862,6 @@ p {
 
 
 .field input {
-
   width: 100%;
 
   padding: 15px 17px;
@@ -863,13 +887,11 @@ p {
 
 
 .field input::placeholder {
-
   color: #a2afbe;
 }
 
 
 .field input:focus {
-
   border-color: var(--cyan);
 
   box-shadow:
@@ -878,11 +900,35 @@ p {
 
 
 /* =========================================================
+   MENSAJE VALIDACIÓN
+========================================================= */
+
+.validation-message {
+  width: 100%;
+
+  margin-top: 18px;
+
+  padding: 12px 15px;
+
+  border: 1px solid #f2c2bd;
+
+  border-radius: 10px;
+
+  background: #fff5f4;
+
+  color: #b42318;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
    ACCIONES
 ========================================================= */
 
 .actions {
-
   width: 100%;
 
   margin-top: 42px;
@@ -900,7 +946,6 @@ p {
 ========================================================= */
 
 .btn {
-
   border: none;
 
   border-radius: 999px;
@@ -916,9 +961,7 @@ p {
   cursor: pointer;
 
   transition:
-
     transform 0.2s ease,
-
     box-shadow 0.2s ease;
 }
 
@@ -928,7 +971,6 @@ p {
 ========================================================= */
 
 .btn.primary {
-
   margin-left: auto;
 
   min-width: 135px;
@@ -936,7 +978,6 @@ p {
   color: #ffffff;
 
   background:
-
     linear-gradient(
       135deg,
       var(--cyan),
@@ -944,27 +985,23 @@ p {
     );
 
   box-shadow:
-
     0 8px 20px rgba(8, 199, 221, 0.22);
 }
 
 
 .btn.primary:hover {
-
   transform: translateY(-2px);
 
   box-shadow:
-
     0 11px 25px rgba(8, 199, 221, 0.28);
 }
 
 
 /* =========================================================
-   VOLVER
+   BOTÓN VOLVER
 ========================================================= */
 
 .btn.secondary {
-
   padding-left: 0;
 
   color: var(--text-light);
@@ -974,7 +1011,6 @@ p {
 
 
 .btn.secondary:hover {
-
   color: var(--blue);
 
   transform: translateX(-2px);
@@ -982,11 +1018,157 @@ p {
 
 
 /* =========================================================
-   RESULTADO
+   RESULTADO SIMULACIÓN
+========================================================= */
+
+.simulation-result {
+  width: 100%;
+}
+
+
+.summary-grid {
+  width: 100%;
+
+  margin-top: 30px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+
+.summary-item {
+  padding: 18px;
+
+  border: 1px solid #dce7f0;
+
+  border-radius: 12px;
+
+  background: #fbfdfe;
+}
+
+
+.summary-label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: var(--text-light);
+
+  font-size: 12px;
+
+  font-weight: 500;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.7px;
+}
+
+
+.summary-item strong {
+  color: var(--blue);
+
+  font-size: 17px;
+
+  line-height: 1.3;
+}
+
+
+/* =========================================================
+   CUOTA SIMULADA
+========================================================= */
+
+.summary-payment {
+  width: 100%;
+
+  margin-top: 18px;
+
+  padding: 24px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #effcff,
+      #f8fdff
+    );
+
+  border: 1px solid #cceef3;
+}
+
+
+.summary-payment span {
+  color: var(--text);
+
+  font-size: 15px;
+
+  font-weight: 600;
+}
+
+
+.summary-payment strong {
+  color: var(--blue);
+
+  font-size: 25px;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   AVISO
+========================================================= */
+
+.notice {
+  width: 100%;
+
+  margin-top: 18px;
+
+  padding: 16px 18px;
+
+  border-radius: 10px;
+
+  background: #f6f9fc;
+
+  border: 1px solid #e0e9f0;
+}
+
+
+.notice strong {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: var(--blue);
+
+  font-size: 13px;
+}
+
+
+.notice p {
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   RESULTADOS FINALES
 ========================================================= */
 
 .result {
-
   width: 100%;
 
   margin-top: 28px;
@@ -999,12 +1181,40 @@ p {
 }
 
 
+.result p {
+  margin-top: 10px;
+}
+
+
+.result p:first-child {
+  margin-top: 0;
+}
+
+
+.result ul {
+  margin: 15px 0 0;
+
+  padding-left: 20px;
+}
+
+
+.result li {
+  margin-bottom: 7px;
+
+  line-height: 1.5;
+}
+
+
+.result li:last-child {
+  margin-bottom: 0;
+}
+
+
 /* =========================================================
    GREEN
 ========================================================= */
 
 .result.green {
-
   color: #087443;
 
   background: #effbf5;
@@ -1018,7 +1228,6 @@ p {
 ========================================================= */
 
 .result.yellow {
-
   color: #946900;
 
   background: #fffaf0;
@@ -1032,7 +1241,6 @@ p {
 ========================================================= */
 
 .result.red {
-
   color: #b42318;
 
   background: #fff5f4;
@@ -1042,48 +1250,286 @@ p {
 
 
 /* =========================================================
-   LISTAS
+   MENSAJES
 ========================================================= */
 
-.result ul {
-
-  margin: 15px 0 0;
-
-  padding-left: 20px;
+.simulation-next-message {
+  margin-top: 24px;
 }
 
 
-.result li {
-
-  margin-bottom: 7px;
-
-  line-height: 1.5;
+.result-followup {
+  margin-top: 20px;
 }
 
 
 /* =========================================================
-   TEXTO PEQUEÑO
+   SECCIÓN INFORMACIÓN
+   BENEFICIOS + REQUISITOS
 ========================================================= */
 
-.small {
+.info-section {
+  width: 100%;
 
-  margin-top: 18px;
+  margin-top: 75px;
 
-  color: #8b99aa;
+  padding-bottom: 35px;
+}
+
+
+/* =========================================================
+   BLOQUES
+========================================================= */
+
+.info-block {
+  width: 100%;
+
+  margin-bottom: 90px;
+}
+
+
+.info-block:last-child {
+  margin-bottom: 0;
+}
+
+
+/* =========================================================
+   ENCABEZADO INFORMACIÓN
+========================================================= */
+
+.info-heading {
+  max-width: 800px;
+
+  margin-bottom: 38px;
+}
+
+
+.info-eyebrow {
+  display: inline-block;
+
+  margin-bottom: 10px;
+
+  color: var(--cyan-dark);
 
   font-size: 13px;
 
-  line-height: 1.5;
+  font-weight: 700;
+
+  letter-spacing: 1.5px;
+
+  text-transform: uppercase;
+}
+
+
+.info-heading h2 {
+  margin-bottom: 14px;
+
+  color: var(--blue);
+
+  font-size: 36px;
+
+  line-height: 1.2;
+
+  letter-spacing: -0.8px;
+}
+
+
+.info-heading p {
+  max-width: 720px;
+
+  font-size: 18px;
+
+  line-height: 1.65;
 }
 
 
 /* =========================================================
-   BLOQUE DE SEGURIDAD
+   BENEFICIOS
 ========================================================= */
 
-.security-info {
+.benefits-grid {
+  display: grid;
 
-  display: none;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 22px;
+}
+
+
+.benefit-card {
+  min-height: 185px;
+
+  padding: 30px;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 22px;
+
+  background:
+    rgba(255, 255, 255, 0.92);
+
+  border: 1px solid #dce7f0;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 12px 30px rgba(20, 40, 75, 0.045);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+.benefit-card:hover {
+  transform: translateY(-3px);
+
+  border-color: #c8e7ed;
+
+  box-shadow:
+    0 18px 35px rgba(20, 40, 75, 0.07);
+}
+
+
+/* =========================================================
+   ICONO BENEFICIO
+========================================================= */
+
+.benefit-icon {
+  flex-shrink: 0;
+
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    rgba(8, 199, 221, 0.12);
+
+  color: var(--cyan-dark);
+
+  font-size: 22px;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   CONTENIDO BENEFICIO
+========================================================= */
+
+.benefit-content {
+  flex: 1;
+}
+
+
+.benefit-content h3 {
+  margin: 2px 0 9px;
+
+  color: var(--blue);
+
+  font-size: 19px;
+
+  line-height: 1.3;
+}
+
+
+.benefit-content p {
+  color: var(--text-light);
+
+  font-size: 15px;
+
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   REQUISITOS
+========================================================= */
+
+.requirements-list {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  border-top: 1px solid #dce7f0;
+}
+
+
+/* =========================================================
+   REQUISITO
+========================================================= */
+
+.requirement-item {
+  min-height: 145px;
+
+  padding: 28px 30px;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 22px;
+
+  border-bottom: 1px solid #dce7f0;
+}
+
+
+.requirement-item:nth-child(odd) {
+  border-right: 1px solid #dce7f0;
+}
+
+
+/* =========================================================
+   NÚMERO
+========================================================= */
+
+.requirement-number {
+  flex-shrink: 0;
+
+  color: var(--cyan-dark);
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  letter-spacing: 1px;
+
+  padding-top: 3px;
+}
+
+
+/* =========================================================
+   CONTENIDO REQUISITO
+========================================================= */
+
+.requirement-item h3 {
+  margin: 0 0 7px;
+
+  color: var(--blue);
+
+  font-size: 18px;
+
+  line-height: 1.35;
+}
+
+
+.requirement-item p {
+  font-size: 15px;
+
+  line-height: 1.6;
 }
 
 
@@ -1092,29 +1538,22 @@ p {
 ========================================================= */
 
 .site-footer {
-
+  width: 100%;
   min-height: 60px;
-
+  flex-shrink: 0;
+  margin-top: auto;
   padding: 15px 7%;
-
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
-
   color: #71849c;
-
   font-size: 12px;
-
   background: rgba(255, 255, 255, 0.85);
-
   border-top: 1px solid #edf2f6;
 }
 
 
 .footer-brand img {
-
   width: 90px;
 
   height: auto;
@@ -1130,32 +1569,42 @@ p {
 @media (max-width: 850px) {
 
   .site-header {
-
     padding: 0 5%;
   }
 
 
   .app {
-
-    padding: 40px 5%;
+    padding: 40px 5% 70px;
   }
 
 
   .card {
-
     padding: 35px 40px;
   }
 
 
   .step-label {
-
     font-size: 10px;
   }
 
 
   .option {
-
     font-size: 15px;
+  }
+
+
+  .info-section {
+    margin-top: 65px;
+  }
+
+
+  .info-heading h2 {
+    font-size: 32px;
+  }
+
+
+  .benefit-card {
+    padding: 25px;
   }
 
 }
@@ -1165,10 +1614,9 @@ p {
    MÓVIL
 ========================================================= */
 
-@media (max-width: 700px) {
+@media (max-width: 650px) {
 
   .site-header {
-
     height: 80px;
 
     padding: 0 20px;
@@ -1176,28 +1624,31 @@ p {
 
 
   .brand img {
-
     width: 120px;
   }
 
 
   .header-message {
-
     font-size: 13px;
   }
 
 
   .app {
-
     min-height: calc(100vh - 80px);
 
-    padding: 25px 15px;
+    padding: 25px 15px 60px;
 
-    align-items: flex-start;
+    align-items: center;
+  }
+
+
+  .page-content {
+    width: 100%;
   }
 
 
   .card {
+    width: 100%;
 
     min-height: auto;
 
@@ -1207,22 +1658,17 @@ p {
   }
 
 
-  /* En móvil simplificamos los nombres */
-
   .step-label {
-
     display: none;
   }
 
 
   .progress {
-
     margin-bottom: 35px;
   }
 
 
   .progress-bar {
-
     left: 10px;
 
     right: 10px;
@@ -1230,54 +1676,165 @@ p {
 
 
   h1 {
-
     font-size: 27px;
   }
 
 
   h2 {
-
     font-size: 24px;
   }
 
 
   p {
-
     font-size: 15px;
   }
 
 
-  /*
-     En móvil sí permitimos que las opciones
-     se acomoden verticalmente.
-  */
+  .eyebrow {
+    font-size: 12px;
+  }
+
 
   .options {
-
-    grid-template-columns: 1fr;
-
-    gap: 4px;
+    gap: 7px;
 
     margin-top: 25px;
   }
 
 
   .option {
+    min-height: 52px;
 
-    text-align: left;
+    padding: 12px 10px;
 
-    padding: 14px 8px;
+    font-size: 14px;
+  }
+
+
+  .term-options {
+    grid-template-columns: 1fr;
   }
 
 
   .actions {
-
     margin-top: 30px;
   }
 
 
-  .site-footer {
+  .summary-grid {
+    grid-template-columns: 1fr;
 
+    gap: 10px;
+  }
+
+
+  .summary-payment {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    padding: 20px;
+  }
+
+
+  .summary-payment strong {
+    font-size: 23px;
+  }
+
+
+  /* =====================================================
+     INFORMACIÓN MÓVIL
+  ===================================================== */
+
+  .info-section {
+    margin-top: 60px;
+  }
+
+
+  .info-block {
+    margin-bottom: 65px;
+  }
+
+
+  .info-heading {
+    margin-bottom: 28px;
+  }
+
+
+  .info-heading h2 {
+    font-size: 28px;
+
+    letter-spacing: -0.5px;
+  }
+
+
+  .info-heading p {
+    font-size: 16px;
+  }
+
+
+  .benefits-grid {
+    grid-template-columns: 1fr;
+
+    gap: 15px;
+  }
+
+
+  .benefit-card {
+    min-height: auto;
+
+    padding: 22px;
+
+    gap: 17px;
+  }
+
+
+  .benefit-icon {
+    width: 42px;
+    height: 42px;
+
+    font-size: 19px;
+  }
+
+
+  .benefit-content h3 {
+    font-size: 17px;
+  }
+
+
+  .benefit-content p {
+    font-size: 14px;
+  }
+
+
+  .requirements-list {
+    grid-template-columns: 1fr;
+  }
+
+
+  .requirement-item {
+    min-height: auto;
+
+    padding: 24px 5px;
+  }
+
+
+  .requirement-item:nth-child(odd) {
+    border-right: none;
+  }
+
+
+  .requirement-item h3 {
+    font-size: 17px;
+  }
+
+
+  .requirement-item p {
+    font-size: 14px;
+  }
+
+
+  .site-footer {
     padding: 15px 20px;
 
     flex-direction: column;
@@ -1297,19 +1854,16 @@ p {
 @media (max-width: 450px) {
 
   .header-message {
-
     display: none;
   }
 
 
   .card {
-
     padding: 25px 19px;
   }
 
 
   .actions {
-
     flex-direction: column-reverse;
 
     gap: 12px;
@@ -1319,14 +1873,27 @@ p {
 
 
   .btn {
-
     width: 100%;
   }
 
 
   .btn.primary {
-
     margin-left: 0;
+  }
+
+
+  .info-heading h2 {
+    font-size: 26px;
+  }
+
+
+  .benefit-card {
+    padding: 20px;
+  }
+
+
+  .requirement-item {
+    padding: 22px 2px;
   }
 
 }
