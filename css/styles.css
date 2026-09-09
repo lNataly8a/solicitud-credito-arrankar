@@ -1,0 +1,1332 @@
+/* =========================================================
+   CSS COMPLETO
+========================================================= */
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+:root {
+  --blue: #102b55;
+  --blue-dark: #0b2347;
+
+  --cyan: #08c7dd;
+  --cyan-dark: #00b4cc;
+
+  --yellow: #ffd83d;
+
+  --text: #17345f;
+  --text-light: #66809f;
+
+  --line: #dce7f0;
+
+  --background: #f8fbfd;
+
+  --white: #ffffff;
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+  overflow-y: visible; 
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+body {
+
+  background:
+
+    radial-gradient(
+      circle at 5% 55%,
+      rgba(8, 199, 221, 0.08),
+      transparent 230px
+    ),
+
+    radial-gradient(
+      circle at 97% 80%,
+      rgba(8, 199, 221, 0.07),
+      transparent 270px
+    ),
+
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f8fbfd 100%
+    );
+}
+
+/* =========================================================
+   AUTO DECORATIVO 
+========================================================= */
+
+.car-decoration {
+  position: fixed;
+  left: -141px;
+  top: 190px; 
+  width: 500px;
+  height: auto;
+  z-index: 1;
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   EL FORMULARIO SIEMPRE POR ENCIMA DEL AUTO
+   ========================================================= */
+
+.card,
+#screen,
+header,
+footer {
+    position: relative;
+    z-index: 2;
+}
+
+main {
+    z-index: auto;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .car-decoration {
+        width: 400px;
+        left: -110px;
+    }
+}
+
+
+/* =========================================================
+   CELULAR
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .car-decoration {
+        display: none;
+    }
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.site-header {
+
+  width: 100%;
+  height: 100px;
+
+  padding: 0 7%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  background: rgba(255, 255, 255, 0.96);
+
+  border-bottom: 1px solid #edf2f6;
+
+  position: relative;
+
+  z-index: 20;
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.brand {
+
+  display: flex;
+
+  align-items: center;
+}
+
+.brand img {
+
+  width: 140px;
+
+  height: auto;
+
+  display: block;
+}
+
+
+/* =========================================================
+   MENSAJE HEADER
+========================================================= */
+
+.header-message {
+
+  position: relative;
+
+  padding-bottom: 9px;
+
+  color: var(--blue);
+
+  font-size: 15px;
+
+  font-weight: 500;
+}
+
+.header-message::after {
+
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+
+  bottom: 0;
+
+  width: 40px;
+
+  height: 3px;
+
+  border-radius: 10px;
+
+  background: var(--cyan);
+}
+
+
+/* =========================================================
+   CONTENEDOR PRINCIPAL
+========================================================= */
+
+.app {
+
+  width: 100%;
+
+  min-height: calc(100vh - 100px);
+
+  padding: 50px 7%;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  position: relative;
+
+  overflow: hidden;
+ 
+}
+
+
+/* =========================================================
+   CÍRCULO IZQUIERDO
+========================================================= */
+
+.circle-left {
+
+  position: absolute;
+
+  width: 530px;
+  height: 530px;
+
+  left: -360px;
+  top: 80px;
+
+  border: 20px solid rgba(8, 199, 221, 0.07);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+
+.circle-left::after {
+
+  content: "";
+
+  position: absolute;
+
+  width: 330px;
+  height: 330px;
+
+  left: 80px;
+  top: 80px;
+
+  border-radius: 50%;
+
+  background: rgba(8, 199, 221, 0.05);
+}
+
+
+/* =========================================================
+   CÍRCULO DERECHO
+========================================================= */
+
+.circle-right {
+
+  position: absolute;
+
+  width: 480px;
+  height: 480px;
+
+  right: -330px;
+  bottom: -250px;
+
+  border: 20px solid rgba(8, 199, 221, 0.06);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+
+
+/* =========================================================
+   TARJETA PRINCIPAL
+========================================================= */
+
+.card {
+
+  position: relative;
+
+  z-index: 5;
+
+  width: min(900px, 100%);
+
+  min-height: 500px;
+
+  padding: 38px 55px 40px;
+
+  background: rgba(255, 255, 255, 0.98);
+
+  border: 1px solid #dce6ef;
+
+  border-radius: 22px;
+
+  box-shadow:
+
+    0 22px 55px rgba(20, 40, 75, 0.07),
+
+    0 4px 15px rgba(20, 40, 75, 0.035);
+}
+
+
+/* =========================================================
+   PROGRESO
+========================================================= */
+
+.progress {
+
+  width: 100%;
+
+  margin-bottom: 45px;
+
+  position: relative;
+}
+
+
+/* =========================================================
+   PASOS
+========================================================= */
+
+.steps {
+
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(6, 1fr);
+
+  align-items: start;
+
+  position: relative;
+
+  z-index: 5;
+}
+
+
+/* =========================================================
+   PASO INDIVIDUAL
+========================================================= */
+
+.step {
+
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: flex-start;
+
+  position: relative;
+
+  color: #8295aa;
+
+  font-size: 11px;
+
+  font-weight: 400;
+
+  text-align: center;
+}
+
+
+/* =========================================================
+   CÍRCULO
+========================================================= */
+
+.step-number {
+
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  border: 2px solid #d7e3ed;
+
+  color: var(--blue);
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  position: relative;
+
+  z-index: 10;
+
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+/* =========================================================
+   TEXTO DEL PASO
+========================================================= */
+
+.step-label {
+
+  display: block;
+
+  margin-top: 12px;
+
+  white-space: nowrap;
+
+  line-height: 1.2;
+
+  color: inherit;
+}
+
+
+/* =========================================================
+   PASO ACTUAL
+========================================================= */
+
+.step.active {
+
+  color: var(--text);
+
+  font-weight: 500;
+}
+
+/* =========================================================
+   PASO ACTUAL
+   El paso en el que estamos todavía permanece blanco
+========================================================= */
+
+.step.active .step-number {
+
+  background: #ffffff;
+
+  border-color: #d7e3ed;
+
+  color: var(--blue);
+
+  box-shadow: none;
+}
+
+/* =========================================================
+   PASO COMPLETADO
+   Los pasos que ya terminamos se vuelven azules
+========================================================= */
+
+.step.completed {
+
+  color: var(--cyan-dark);
+
+  font-weight: 600;
+}
+
+.step.completed .step-number {
+
+  background: var(--cyan);
+
+  border-color: var(--cyan);
+
+  color: #ffffff;
+
+  box-shadow:
+    0 5px 14px rgba(8, 199, 221, 0.20);
+}
+
+
+/* =========================================================
+   PASOS FUTUROS
+========================================================= */
+
+.step:not(.active):not(.completed) {
+
+  color: #8295aa;
+}
+
+.step:not(.active):not(.completed) .step-number {
+
+  background: #ffffff;
+
+  border-color: #d7e3ed;
+
+  color: var(--blue);
+
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   BARRA DE PROGRESO
+========================================================= */
+
+.progress-bar {
+
+  position: absolute;
+
+  left: 16px;
+
+  right: 16px;
+
+  top: 14px;
+
+  height: 5px;
+
+  background: #e5edf4;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  z-index: 1;
+}
+
+
+/* =========================================================
+   BARRA COMPLETADA
+========================================================= */
+
+#progressFill {
+
+  width: 0%;
+
+  height: 100%;
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--cyan),
+      var(--cyan-dark)
+    );
+
+  transition:
+    width 0.35s ease;
+}
+
+
+/* =========================================================
+   TEXTO DE PROGRESO
+========================================================= */
+
+#progressText {
+
+  display: block;
+
+  margin-top: 20px;
+
+  color: var(--text-light);
+
+  font-size: 13px;
+
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   TÍTULOS
+========================================================= */
+
+h1 {
+
+  margin: 0 0 14px;
+
+  color: var(--blue);
+
+  font-size: 32px;
+
+  line-height: 1.2;
+
+  font-weight: 700;
+
+  letter-spacing: -0.7px;
+}
+
+
+h2 {
+
+  margin: 0 0 14px;
+
+  color: var(--blue);
+
+  font-size: 28px;
+
+  line-height: 1.25;
+
+  font-weight: 700;
+
+  letter-spacing: -0.5px;
+}
+
+
+/* =========================================================
+   PÁRRAFOS
+========================================================= */
+
+p {
+
+  margin: 0;
+
+  color: var(--text-light);
+
+  font-size: 16px;
+
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   CONTENEDOR DE PREGUNTAS
+========================================================= */
+
+#screen {
+
+  width: 100%;
+}
+
+
+/* =========================================================
+   OPCIONES DEL FORMULARIO
+========================================================= */
+
+.options {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+
+/* =========================================================
+   OPCIÓN
+========================================================= */
+
+.option {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  min-height: 54px;
+
+  padding: 0 18px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #d9e5ed;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: var(--blue);
+
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 400;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.option:hover {
+
+  border-color: #9edee8;
+
+  background: #fbfeff;
+}
+
+/* =========================================================
+   CÍRCULO AL PASAR EL MOUSE
+========================================================= */
+
+.option:hover::before {
+
+  border-color: var(--cyan);
+}
+
+
+/* =========================================================
+   OPCIÓN SELECCIONADA
+========================================================= */
+
+.option.selected {
+
+  border-color: var(--cyan);
+
+  background: #f5fcfd;
+
+  box-shadow:
+    0 2px 8px rgba(0, 180, 210, 0.08);
+
+  font-weight: 600;
+}
+
+/* =========================================================
+   CÍRCULO SELECCIONADO
+========================================================= */
+
+.option.selected::before {
+
+  border-color: var(--cyan);
+
+  background: var(--cyan);
+
+  box-shadow:
+    inset 0 0 0 4px #ffffff;
+}
+
+/* =========================================================
+   QUITAR EL CHECK QUE TENÍAMOS ANTES
+========================================================= */
+
+.option.selected::after {
+
+  content: none;
+}
+
+/* =========================================================
+   CÍRCULO DE LA OPCIÓN
+========================================================= */
+
+.option::before {
+
+  content: "";
+
+  flex-shrink: 0;
+
+  width: 18px;
+  height: 18px;
+
+  margin-right: 14px;
+
+  box-sizing: border-box;
+
+  border: 2px solid #cbdbe6;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+/* =========================================================
+   ACCESIBILIDAD
+========================================================= */
+
+.option:focus-visible {
+
+  outline: 2px solid var(--cyan);
+
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   CAMPOS
+========================================================= */
+
+.field {
+
+  width: 100%;
+
+  margin-top: 28px;
+}
+
+
+.field label {
+
+  display: block;
+
+  margin-bottom: 9px;
+
+  color: var(--blue);
+
+  font-size: 14px;
+
+  font-weight: 700;
+}
+
+
+.field input {
+
+  width: 100%;
+
+  padding: 15px 17px;
+
+  border: 1px solid #dbe6ef;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: var(--text);
+
+  font-family: inherit;
+
+  font-size: 16px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.field input::placeholder {
+
+  color: #a2afbe;
+}
+
+
+.field input:focus {
+
+  border-color: var(--cyan);
+
+  box-shadow:
+    0 0 0 4px rgba(8, 199, 221, 0.09);
+}
+
+
+/* =========================================================
+   ACCIONES
+========================================================= */
+
+.actions {
+
+  width: 100%;
+
+  margin-top: 42px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+}
+
+
+/* =========================================================
+   BOTONES
+========================================================= */
+
+.btn {
+
+  border: none;
+
+  border-radius: 999px;
+
+  padding: 13px 30px;
+
+  font-family: inherit;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+
+    transform 0.2s ease,
+
+    box-shadow 0.2s ease;
+}
+
+
+/* =========================================================
+   BOTÓN PRINCIPAL
+========================================================= */
+
+.btn.primary {
+
+  margin-left: auto;
+
+  min-width: 135px;
+
+  color: #ffffff;
+
+  background:
+
+    linear-gradient(
+      135deg,
+      var(--cyan),
+      var(--cyan-dark)
+    );
+
+  box-shadow:
+
+    0 8px 20px rgba(8, 199, 221, 0.22);
+}
+
+
+.btn.primary:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow:
+
+    0 11px 25px rgba(8, 199, 221, 0.28);
+}
+
+
+/* =========================================================
+   VOLVER
+========================================================= */
+
+.btn.secondary {
+
+  padding-left: 0;
+
+  color: var(--text-light);
+
+  background: transparent;
+}
+
+
+.btn.secondary:hover {
+
+  color: var(--blue);
+
+  transform: translateX(-2px);
+}
+
+
+/* =========================================================
+   RESULTADO
+========================================================= */
+
+.result {
+
+  width: 100%;
+
+  margin-top: 28px;
+
+  padding: 20px 22px;
+
+  border-radius: 13px;
+
+  border: 1px solid transparent;
+}
+
+
+/* =========================================================
+   GREEN
+========================================================= */
+
+.result.green {
+
+  color: #087443;
+
+  background: #effbf5;
+
+  border-color: #b7ecd2;
+}
+
+
+/* =========================================================
+   YELLOW
+========================================================= */
+
+.result.yellow {
+
+  color: #946900;
+
+  background: #fffaf0;
+
+  border-color: #f1d58a;
+}
+
+
+/* =========================================================
+   RED
+========================================================= */
+
+.result.red {
+
+  color: #b42318;
+
+  background: #fff5f4;
+
+  border-color: #f2c2bd;
+}
+
+
+/* =========================================================
+   LISTAS
+========================================================= */
+
+.result ul {
+
+  margin: 15px 0 0;
+
+  padding-left: 20px;
+}
+
+
+.result li {
+
+  margin-bottom: 7px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   TEXTO PEQUEÑO
+========================================================= */
+
+.small {
+
+  margin-top: 18px;
+
+  color: #8b99aa;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   BLOQUE DE SEGURIDAD
+========================================================= */
+
+.security-info {
+
+  display: none;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.site-footer {
+
+  min-height: 60px;
+
+  padding: 15px 7%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  color: #71849c;
+
+  font-size: 12px;
+
+  background: rgba(255, 255, 255, 0.85);
+
+  border-top: 1px solid #edf2f6;
+}
+
+
+.footer-brand img {
+
+  width: 90px;
+
+  height: auto;
+
+  display: block;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 850px) {
+
+  .site-header {
+
+    padding: 0 5%;
+  }
+
+
+  .app {
+
+    padding: 40px 5%;
+  }
+
+
+  .card {
+
+    padding: 35px 40px;
+  }
+
+
+  .step-label {
+
+    font-size: 10px;
+  }
+
+
+  .option {
+
+    font-size: 15px;
+  }
+
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .site-header {
+
+    height: 80px;
+
+    padding: 0 20px;
+  }
+
+
+  .brand img {
+
+    width: 120px;
+  }
+
+
+  .header-message {
+
+    font-size: 13px;
+  }
+
+
+  .app {
+
+    min-height: calc(100vh - 80px);
+
+    padding: 25px 15px;
+
+    align-items: flex-start;
+  }
+
+
+  .card {
+
+    min-height: auto;
+
+    padding: 28px 22px;
+
+    border-radius: 18px;
+  }
+
+
+  /* En móvil simplificamos los nombres */
+
+  .step-label {
+
+    display: none;
+  }
+
+
+  .progress {
+
+    margin-bottom: 35px;
+  }
+
+
+  .progress-bar {
+
+    left: 10px;
+
+    right: 10px;
+  }
+
+
+  h1 {
+
+    font-size: 27px;
+  }
+
+
+  h2 {
+
+    font-size: 24px;
+  }
+
+
+  p {
+
+    font-size: 15px;
+  }
+
+
+  /*
+     En móvil sí permitimos que las opciones
+     se acomoden verticalmente.
+  */
+
+  .options {
+
+    grid-template-columns: 1fr;
+
+    gap: 4px;
+
+    margin-top: 25px;
+  }
+
+
+  .option {
+
+    text-align: left;
+
+    padding: 14px 8px;
+  }
+
+
+  .actions {
+
+    margin-top: 30px;
+  }
+
+
+  .site-footer {
+
+    padding: 15px 20px;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    text-align: center;
+  }
+
+}
+
+
+/* =========================================================
+   MÓVIL PEQUEÑO
+========================================================= */
+
+@media (max-width: 450px) {
+
+  .header-message {
+
+    display: none;
+  }
+
+
+  .card {
+
+    padding: 25px 19px;
+  }
+
+
+  .actions {
+
+    flex-direction: column-reverse;
+
+    gap: 12px;
+
+    align-items: stretch;
+  }
+
+
+  .btn {
+
+    width: 100%;
+  }
+
+
+  .btn.primary {
+
+    margin-left: 0;
+  }
+
+}

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Solicitud de crédito | Arrankar</title>
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <img
+    src="assets/auto.png"
+    alt=""
+    class="car-decoration">
+
+  <!-- ENCABEZADO ARRANKAR -->
+  <header class="site-header">
+
+    <div class="brand">
+      <img
+        src="assets/logo-arrankar.png"
+        alt="Arrankar"
+      >
+    </div>
+
+    <div class="header-message">
+      <span>Tu próximo auto, más cerca</span>
+    </div>
+
+  </header>
+
+
+
+
+  <!-- CONTENIDO -->
+  <main class="app">
+
+    <!-- Elementos decorativos -->
+    <div class="decorative-circle circle-left"></div>
+    <div class="decorative-circle circle-right"></div>
+
+    <section class="card">
+
+      <!-- PROGRESO -->
+      <div class="progress">
+
+        <div class="steps">
+
+          <div class="step active">
+            <span class="step-number">1</span>
+            <span class="step-label">Historial crediticio</span>
+          </div>
+
+          <div class="step">
+            <span class="step-number">2</span>
+            <span class="step-label">Actividad laboral</span>
+          </div>
+
+          <div class="step">
+            <span class="step-number">3</span>
+            <span class="step-label">Antigüedad</span>
+          </div>
+
+          <div class="step">
+            <span class="step-number">4</span>
+            <span class="step-label">Ingresos</span>
+          </div>
+
+          <div class="step">
+            <span class="step-number">5</span>
+            <span class="step-label">Vehículo</span>
+          </div>
+
+          <div class="step">
+            <span class="step-number">6</span>
+            <span class="step-label">Resultado</span>
+          </div>
+
+        </div>
+
+        <div class="progress-bar">
+          <div id="progressFill"></div>
+        </div>
+
+        <span id="progressText">Inicio</span>
+
+      </div>
+
+
+      <!-- PREGUNTAS -->
+      <div id="screen"></div>
+
+
+      <!-- BOTONES -->
+      <div class="actions">
+
+        <button
+          id="backBtn"
+          class="btn secondary"
+          type="button"
+          hidden
+        >
+          ← Volver
+        </button>
+
+        <button
+          id="nextBtn"
+          class="btn primary"
+          type="button"
+        >
+          Comenzar →
+        </button>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+  <!-- PIE -->
+  <footer class="site-footer">
+
+    <div class="footer-brand">
+      <img
+        src="assets/logo-arrankar.png"
+        alt="Arrankar"
+      >
+    </div>
+
+    <span>
+      Soluciones de movilidad y financiamiento
+    </span>
+
+    <span>
+      Proceso 100% seguro
+    </span>
+
+  </footer>
+
+
+  <script src="js/questions.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
