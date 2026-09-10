@@ -1561,6 +1561,87 @@ p {
   display: block;
 }
 
+/* =========================================================
+   SELECT - ANTIGÜEDAD
+========================================================= */
+
+#qualificationInput[type="text"],
+#qualificationInput[type="number"],
+select#qualificationInput {
+  width: 100%;
+  max-width: 420px;
+  min-height: 52px;
+  box-sizing: border-box;
+
+  padding: 0 48px 0 16px;
+
+  border: 1.5px solid #b7c7df;
+  border-radius: 10px;
+
+  background-color: #ffffff;
+  color: #173f73;
+
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+/* Selector específicamente */
+select#qualificationInput {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  cursor: pointer;
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, #173f73 50%),
+    linear-gradient(135deg, #173f73 50%, transparent 50%);
+  background-position:
+    calc(100% - 20px) 22px,
+    calc(100% - 14px) 22px;
+  background-size:
+    6px 6px,
+    6px 6px;
+  background-repeat: no-repeat;
+}
+
+/* Placeholder */
+select#qualificationInput:invalid {
+  color: #7183a0;
+}
+
+/* Hover */
+select#qualificationInput:hover {
+  border-color: #009fc4;
+  background-color: #fbfdff;
+}
+
+/* Focus */
+select#qualificationInput:focus {
+  border-color: #009fc4;
+  box-shadow: 0 0 0 3px rgba(0, 159, 196, 0.12);
+}
+
+/* Opciones */
+select#qualificationInput option {
+  color: #173f73;
+  background: #ffffff;
+  font-size: 16px;
+}
+
+/* En móvil */
+@media (max-width: 600px) {
+  select#qualificationInput {
+    max-width: 100%;
+  }
+}
 
 /* =========================================================
    TABLET
