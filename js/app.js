@@ -37,7 +37,124 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let answers = {};
 
-  let qualificationResult = null;
+let qualificationResult = null;
+
+/* =======================================================
+   IDENTIFICACIÓN SANDBOX
+======================================================= */
+
+let participantId = "";
+let sessionId = "";
+
+function generateId(prefix) {
+  return (
+    prefix +
+    "_" +
+    Date.now().toString(36) +
+    "_" +
+    Math.random().toString(36).substring(2, 8)
+  );
+}
+
+function initializeSandboxSession() {
+  participantId = generateId("P");
+  sessionId = generateId("S");
+}
+
+initializeSandboxSession();
+
+/* =======================================================
+   SANDBOX - GOOGLE SHEETS
+======================================================= */
+
+const SANDBOX_URL =
+  "https://script.google.com/macros/s/AKfycbwGAaX6h6OiEyURHxcy_EU6HCRrh4lR1X22GcgHU-S9UfzoKhqdKodPoAYOKcdAqtjm/exec";
+
+/* =======================================================
+   COLA DE ENVÍO SANDBOX
+   Mantiene los eventos en el mismo orden en que ocurren
+======================================================= */
+
+let sandboxQueue = Promise.resolve();
+
+function sendSandboxData(data) {
+  sandboxQueue = sandboxQueue
+    .then(() => {
+      return fetch(SANDBOX_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(data)
+      });
+    })
+    .catch(error => {
+      console.warn(
+        "No fue posible enviar datos al sandbox:",
+        error
+      );
+    });
+
+  return sandboxQueue;
+}
+
+
+/* =======================================================
+   REGISTRAR EVENTOS
+======================================================= */
+
+function logSandboxEvent(etapa, accion) {
+
+  sendSandboxData({
+    type: "event",
+    participant_id: participantId,
+    session_id: sessionId,
+    fecha: new Date().toISOString(),
+    etapa: etapa,
+    accion: accion
+  });
+
+}
+
+
+/* =======================================================
+   GUARDAR PARTICIPANTE COMPLETADO
+======================================================= */
+
+function saveSandboxParticipant() {
+
+  sendSandboxData({
+    type: "participant",
+
+    participant_id: participantId,
+
+    fecha: new Date().toISOString(),
+
+    vehicle: simulation.vehicleType,
+
+    condition: simulation.vehicleCondition,
+
+    value: simulation.vehicleValue,
+
+    downPayment: simulation.downPayment,
+
+    term: simulation.term,
+
+    income:
+      answers.monthly_income || 0,
+
+    history:
+      answers.credit_history || "",
+
+    result:
+      qualificationResult?.status || "",
+
+    template:
+      qualificationResult?.template || ""
+  });
+
+}
 
   /* =======================================================
      CONFIGURACIÓN DEL PROTOTIPO
@@ -64,6 +181,19 @@ document.addEventListener("DOMContentLoaded", () => {
     60,
     72,
     84
+  ];
+
+  /* =======================================================
+     OPCIONES DE ANTIGÜEDAD
+  ======================================================= */
+
+  /* Rangos visibles para el usuario y su valor interno
+     provisional en meses para las reglas actuales. */
+  const ACTIVITY_OPTIONS = [
+    { value: "under_1_year", label: "Menos de 1 año", months: 0 },
+    { value: "1_to_2_years", label: "Entre 1 y 2 años", months: 12 },
+    { value: "2_to_3_years", label: "Entre 2 y 3 años", months: 24 },
+    { value: "over_3_years", label: "Más de 3 años", months: 36 }
   ];
 
   /* =======================================================
@@ -3258,6 +3388,63 @@ function renderInputQuestion(
     ] ?? "";
 
 
+  /* Antigüedad: mostramos rangos en años para que
+     el usuario no tenga que interpretar meses. */
+  if (question.id === "activity_months") {
+
+    screen.innerHTML = `
+
+      <div class="question">
+
+        <span class="eyebrow">
+          PRECALIFICACIÓN
+        </span>
+
+        <h2>
+          ${question.title}
+        </h2>
+
+        <p>
+          ${question.text}
+        </p>
+
+        <div class="field">
+
+          <label for="qualificationInput">
+            ${question.title}
+          </label>
+
+          <select
+            id="qualificationInput"
+            autocomplete="off"
+          >
+
+            <option value="">
+              Selecciona una opción
+            </option>
+
+            ${ACTIVITY_OPTIONS.map(option => `
+              <option
+                value="${option.value}"
+                ${answers.activity_months_range === option.value ? "selected" : ""}
+              >
+                ${option.label}
+              </option>
+            `).join("")}
+
+          </select>
+
+        </div>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
   const isCurrency =
     question.type === "currency";
 
@@ -3373,6 +3560,45 @@ function validateQualificationStep() {
 
   if (!question) {
     return true;
+  }
+
+
+  /* Antigüedad usa un selector por rangos. Guardamos la
+     respuesta visible y un valor interno provisional en meses. */
+  if (question.id === "activity_months") {
+
+    const select =
+      document.getElementById("qualificationInput");
+
+    const selectedValue =
+      select?.value || "";
+
+    const selectedOption =
+      ACTIVITY_OPTIONS.find(
+        option => option.value === selectedValue
+      );
+
+    if (!selectedOption) {
+
+      showValidation(
+        "Selecciona tu antigüedad para continuar."
+      );
+
+      return false;
+
+    }
+
+    answers.activity_months_range =
+      selectedOption.value;
+
+    answers.activity_months_label =
+      selectedOption.label;
+
+    answers.activity_months =
+      selectedOption.months;
+
+    return true;
+
   }
 
 
@@ -3609,6 +3835,94 @@ function evaluateQualification() {
 
 }
 
+/* =======================================================
+   GUARDAR RESULTADO - SANDBOX
+======================================================= */
+
+function saveSandboxResult() {
+
+  const SANDBOX_URL =
+    "https://script.google.com/macros/s/AKfycbwGAaX6h6OiEyURHxcy_EU6HCRrh4lR1X22GcgHU-S9UfzoKhqdKodPoAYOKcdAqtjm/exec"; 
+
+
+  const data = {
+
+    fecha:
+      new Date().toISOString(),
+
+    vehicleType:
+      simulation.vehicleType,
+
+    vehicleCondition:
+      simulation.vehicleCondition,
+
+    vehicleValue:
+      simulation.vehicleValue,
+
+    downPayment:
+      simulation.downPayment,
+
+    financedAmount:
+      simulation.financedAmount,
+
+    term:
+      simulation.term,
+
+    monthlyPayment:
+      simulation.monthlyPayment,
+
+    employment:
+      answers.employment || "",
+
+    creditHistory:
+      answers.credit_history || "",
+
+    activityMonthsRange:
+      answers.activity_months_range || "",
+
+    activityMonthsLabel:
+      answers.activity_months_label || "",
+
+    activityMonths:
+      answers.activity_months || 0,
+
+    monthlyIncome:
+      answers.monthly_income || 0,
+
+    result:
+      qualificationResult?.status || "",
+
+    template:
+      qualificationResult?.template || ""
+
+  };
+
+
+  fetch(
+    SANDBOX_URL,
+    {
+      method: "POST",
+
+      mode: "no-cors",
+
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+
+      body: JSON.stringify(data)
+
+    }
+  )
+  .catch(error => {
+
+    console.error(
+      "Error guardando resultado sandbox:",
+      error
+    );
+
+  });
+
+}
 
 /* =======================================================
    FINALIZAR PRECALIFICACIÓN
@@ -3619,8 +3933,15 @@ function finishQualification() {
   qualificationResult =
     evaluateQualification();
 
-  renderFinalResult();
+  saveSandboxParticipant();
 
+  logSandboxEvent(
+    "resultado",
+    "completó - " +
+      qualificationResult.status
+  );
+
+  renderFinalResult();
 }
 
 
@@ -3828,19 +4149,22 @@ function next() {
      BIENVENIDA
   ------------------------------------------------------- */
 
-  if (
-    flow === "welcome"
-  ) {
+if (
+  flow === "welcome"
+) {
+  simulationStep = 0;
 
-    simulationStep = 0;
+  logSandboxEvent(
+    "bienvenida",
+    "inició"
+  );
 
-    flow = "simulation";
+  flow = "simulation";
 
-    renderSimulation();
+  renderSimulation();
 
-    return;
-
-  }
+  return;
+}
 
 
   /* -------------------------------------------------------
@@ -3860,24 +4184,34 @@ function next() {
     }
 
 
-    if (
-      simulationStep < 4
-    ) {
+if (
+  simulationStep < 4
+) {
 
-      simulationStep++;
+  logSandboxEvent(
+    "simulación",
+    "completó paso " +
+      (simulationStep + 1)
+  );
 
-      renderSimulation();
+  simulationStep++;
 
-      return;
+  renderSimulation();
 
-    }
+  return;
+}
 
 
-    calculateSimulation();
+calculateSimulation();
 
-    renderSimulationResult();
+logSandboxEvent(
+  "simulación",
+  "completó simulación"
+);
 
-    return;
+renderSimulationResult();
+
+return;
 
   }
 
@@ -3886,57 +4220,68 @@ function next() {
      RESULTADO SIMULACIÓN
   ------------------------------------------------------- */
 
-  if (
-    flow === "simulation-result"
-  ) {
+if (
+  flow === "simulation-result"
+) {
 
-    qualificationStep = 0;
+  logSandboxEvent(
+    "resultado_simulación",
+    "continuó a precalificación"
+  );
 
-    answers = {};
+  qualificationStep = 0;
 
-    renderQualification();
+  answers = {};
 
-    return;
+  renderQualification();
 
-  }
+  return;
+}
 
 
   /* -------------------------------------------------------
      PRECALIFICACIÓN
   ------------------------------------------------------- */
 
+if (
+  flow === "qualification"
+) {
+
   if (
-    flow === "qualification"
+    !validateQualificationStep()
   ) {
-
-    if (
-      !validateQualificationStep()
-    ) {
-
-      return;
-
-    }
-
-
-    if (
-      qualificationStep <
-      QUESTIONS.length - 1
-    ) {
-
-      qualificationStep++;
-
-      renderQualification();
-
-      return;
-
-    }
-
-
-    finishQualification();
-
     return;
+  }
+
+  const currentQuestion =
+    QUESTIONS[qualificationStep];
+
+  if (currentQuestion) {
+
+    logSandboxEvent(
+      "precalificación",
+      "respondió: " +
+        currentQuestion.id
+    );
 
   }
+
+  if (
+    qualificationStep <
+    QUESTIONS.length - 1
+  ) {
+
+    qualificationStep++;
+
+    renderQualification();
+
+    return;
+  }
+
+  finishQualification();
+
+  return;
+}
 
 
   /* -------------------------------------------------------
@@ -4068,6 +4413,8 @@ function resetFlow() {
 
   qualificationResult =
     null;
+
+    initializeSandboxSession();
 
 
   simulation = {
