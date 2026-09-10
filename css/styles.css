@@ -1636,6 +1636,256 @@ select#qualificationInput option {
   font-size: 16px;
 }
 
+.final-thanks {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.final-thanks h2 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.final-thanks p {
+  margin: 0.5rem 0 0;
+  font-size: 1.05rem;
+}
+
+/* =======================================================
+   CAMPO DE CORREO - PANTALLA INICIAL
+======================================================= */
+
+.email-field {
+  margin-top: 1.5rem;
+  margin-bottom: 1.8rem;
+  max-width: 520px;
+}
+
+.email-field label {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #123b72;
+}
+
+.email-field input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.85rem 1rem;
+  border: 1px solid #cbd8e6;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #123b72;
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.email-field input::placeholder {
+  color: #8a99aa;
+}
+
+.email-field input:focus {
+  border-color: #00bfd6;
+  box-shadow: 0 0 0 3px rgba(0, 191, 214, 0.12);
+}
+
+/* =======================================================
+   ENLACE DE POLÍTICA DE PRIVACIDAD
+======================================================= */
+
+.privacy-link {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: -0.8rem;
+  margin-bottom: 1.8rem;
+  font-size: 0.85rem;
+}
+
+.privacy-link span {
+  font-size: 0.9rem;
+}
+
+.privacy-link button {
+  padding: 0;
+  border: none;
+  background: none;
+  color: #1261a0;
+  font-family: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.privacy-link button:hover {
+  color: #00b8d4;
+}
+
+
+/* =======================================================
+   MODAL DE PRIVACIDAD
+======================================================= */
+
+.privacy-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.privacy-modal.is-open {
+  display: flex;
+}
+
+.privacy-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(7, 28, 55, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.privacy-modal-content {
+  position: relative;
+  z-index: 1;
+  width: min(700px, 100%);
+  max-height: 85vh;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #dce6ef;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 40, 80, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.privacy-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.1rem;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: #f2f6fa;
+  color: #123b72;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.privacy-modal-close:hover {
+  background: #e5edf5;
+}
+
+.privacy-modal-header {
+  padding: 2rem 3.5rem 1.2rem 2rem;
+  border-bottom: 1px solid #e5edf2;
+}
+
+.privacy-modal-icon {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-size: 1.4rem;
+}
+
+.privacy-modal-header h2 {
+  margin: 0;
+  color: #123b72;
+  font-size: 1.35rem;
+  line-height: 1.35;
+}
+
+.privacy-modal-body {
+  padding: 1.5rem 2rem;
+  overflow-y: auto;
+  color: #40566f;
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.privacy-modal-body h3 {
+  margin: 1.4rem 0 0.45rem;
+  color: #123b72;
+  font-size: 1rem;
+}
+
+.privacy-modal-body h3:first-child {
+  margin-top: 0;
+}
+
+.privacy-modal-body p {
+  margin: 0 0 0.8rem;
+}
+
+.privacy-modal-note {
+  margin-top: 1.5rem !important;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  background: #f4f8fb;
+  font-size: 0.8rem;
+}
+
+.privacy-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem 2rem;
+  border-top: 1px solid #e5edf2;
+}
+
+.privacy-modal-button {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  background: #08bfd5;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.privacy-modal-button:hover {
+  background: #00aabd;
+}
+
+
+/* =======================================================
+   MODAL EN PANTALLAS PEQUEÑAS
+======================================================= */
+
+@media (max-width: 600px) {
+
+  .privacy-modal {
+    padding: 0.8rem;
+  }
+
+  .privacy-modal-content {
+    max-height: 90vh;
+    border-radius: 12px;
+  }
+
+  .privacy-modal-header {
+    padding: 1.5rem 3rem 1rem 1.3rem;
+  }
+
+  .privacy-modal-body {
+    padding: 1.2rem 1.3rem;
+  }
+
+  .privacy-modal-footer {
+    padding: 0.9rem 1.3rem;
+  }
+
+}
+
 /* En móvil */
 @media (max-width: 600px) {
   select#qualificationInput {

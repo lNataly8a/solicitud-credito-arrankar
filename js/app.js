@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   let answers = {};
+  let participantEmail = "";
 
 let qualificationResult = null;
 
@@ -68,7 +69,7 @@ initializeSandboxSession();
 ======================================================= */
 
 const SANDBOX_URL =
-  "https://script.google.com/macros/s/AKfycbwGAaX6h6OiEyURHxcy_EU6HCRrh4lR1X22GcgHU-S9UfzoKhqdKodPoAYOKcdAqtjm/exec";
+  "https://script.google.com/macros/s/AKfycbwfqywiKBaOLgFAL1laYxih7PaU7xESXY04pF_wLrq4sD1hqxvfXGQsPbOTdKkcINOR/exec";
 
 /* =======================================================
    COLA DE ENVÍO SANDBOX
@@ -128,6 +129,8 @@ function saveSandboxParticipant() {
     type: "participant",
 
     participant_id: participantId,
+
+    email: participantEmail,
 
     fecha: new Date().toISOString(),
 
@@ -427,7 +430,7 @@ function updateProgress(stage, completedUntil = -1) {
         </span>
 
         <h1>
-          Simula tu financiación
+          Adquiere tu financiación
         </h1>
 
         <p>
@@ -435,6 +438,27 @@ function updateProgress(stage, completedUntil = -1) {
           el valor que deseas financiar y el plazo que tienes
           en mente.
         </p>
+
+        <div class="email-field">
+  <label for="participantEmail">
+    Antes de empezar, necesitamos tu correo electrónico
+  </label>
+
+  <input
+    id="participantEmail"
+    type="email"
+    placeholder="tu correo electrónico"
+    autocomplete="email"
+    value="${participantEmail}"
+  >
+</div>
+
+<div class="privacy-link">
+  <span>🔒</span>
+  <button type="button" id="openPrivacyModal">
+    Política de Tratamiento de Datos Personales y Privacidad
+  </button>
+</div>
 
         <div class="welcome-points">
 
@@ -2129,6 +2153,26 @@ function renderWelcome() {
           en mente.
       </p>
 
+      <div class="email-field">
+  <label for="participantEmail">
+    Antes de empezar, necesitamos tu correo electrónico
+  </label>
+
+  <input
+    id="participantEmail"
+    type="email"
+    placeholder="tu correo electrónico"
+    autocomplete="email"
+    value="${participantEmail}"
+  >
+</div>
+
+<div class="privacy-link">
+  <span>🔒</span>
+  <button type="button" id="openPrivacyModal">
+    Política de Tratamiento de Datos Personales y Privacidad
+  </button>
+</div>
 
       <div class="welcome-points">
 
@@ -3842,10 +3886,13 @@ function evaluateQualification() {
 function saveSandboxResult() {
 
   const SANDBOX_URL =
-    "https://script.google.com/macros/s/AKfycbwGAaX6h6OiEyURHxcy_EU6HCRrh4lR1X22GcgHU-S9UfzoKhqdKodPoAYOKcdAqtjm/exec"; 
+    "https://script.google.com/macros/s/AKfycbwfqywiKBaOLgFAL1laYxih7PaU7xESXY04pF_wLrq4sD1hqxvfXGQsPbOTdKkcINOR/exec"; 
 
 
   const data = {
+
+    email:
+  participantEmail,
 
     fecha:
       new Date().toISOString(),
@@ -4060,6 +4107,11 @@ function renderFinalResult() {
 
     <div class="final-result">
 
+        <div class="final-thanks">
+      <h2>Gracias por participar</h2>
+      <p>Estaremos en contacto.</p>
+    </div>
+
       <span class="eyebrow">
         RESULTADO
       </span>
@@ -4152,6 +4204,35 @@ function next() {
 if (
   flow === "welcome"
 ) {
+
+  const emailInput =
+  document.getElementById("participantEmail");
+
+if (!emailInput) {
+  return;
+}
+
+const email =
+  emailInput.value.trim();
+
+if (!email) {
+  showValidation(
+    "Ingresa tu correo electrónico para continuar."
+  );
+  return;
+}
+
+if (
+  !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+) {
+  showValidation(
+    "Ingresa un correo electrónico válido."
+  );
+  return;
+}
+
+participantEmail = email;
+
   simulationStep = 0;
 
   logSandboxEvent(
@@ -4462,6 +4543,86 @@ backBtn.addEventListener(
   back
 );
 
+/* =======================================================
+   MODAL - POLÍTICA DE PRIVACIDAD
+======================================================= */
+
+function openPrivacyPolicy() {
+  const privacyModal =
+    document.getElementById("privacyModal");
+
+  if (!privacyModal) return;
+
+  privacyModal.classList.add("is-open");
+  privacyModal.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+  document.body.style.overflow = "hidden";
+}
+
+
+function closePrivacyPolicy() {
+  const privacyModal =
+    document.getElementById("privacyModal");
+
+  if (!privacyModal) return;
+
+  privacyModal.classList.remove("is-open");
+  privacyModal.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  document.body.style.overflow = "";
+}
+
+
+/*
+   Usamos delegación de eventos porque
+   #openPrivacyModal se crea dinámicamente
+   dentro de renderWelcome().
+*/
+
+document.addEventListener("click", (event) => {
+
+  if (
+    event.target.closest("#openPrivacyModal")
+  ) {
+    openPrivacyPolicy();
+    return;
+  }
+
+
+  if (
+    event.target.closest("#closePrivacyModal") ||
+    event.target.closest("#closePrivacyModalButton") ||
+    event.target.closest("#privacyModalOverlay")
+  ) {
+    closePrivacyPolicy();
+  }
+
+});
+
+
+document.addEventListener("keydown", (event) => {
+
+  if (event.key !== "Escape") {
+    return;
+  }
+
+  const privacyModal =
+    document.getElementById("privacyModal");
+
+  if (
+    privacyModal &&
+    privacyModal.classList.contains("is-open")
+  ) {
+    closePrivacyPolicy();
+  }
+
+});
 
 /* =======================================================
    INICIO
