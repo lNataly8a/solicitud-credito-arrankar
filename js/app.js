@@ -1288,7 +1288,7 @@ function updateButtons() {
         Política de Tratamiento de Datos Personales y Privacidad
       </button>
 
-      y autorizo el tratamiento de mis datos de acuerdo con ella.
+      y autorizo el tratamiento de mis datos.
 
     </span>
 
