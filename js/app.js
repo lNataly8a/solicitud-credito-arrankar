@@ -1359,8 +1359,155 @@ function updateButtons() {
 
 
   /* =======================================================
-     SIMULACIÓN
+     RESUMEN DE PASOS COMPLETADOS
   ======================================================= */
+
+  function escapeSummaryText(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function getSummaryItems() {
+    const items = [];
+
+    if (participantEmail) {
+      items.push({
+        label: "Correo electrónico",
+        value: participantEmail
+      });
+    }
+
+    if (simulation.vehicleType) {
+      items.push({
+        label: "Vehículo",
+        value: simulation.vehicleType === "car" ? "Automóvil" : "Moto"
+      });
+    }
+
+    if (simulation.vehicleCondition) {
+      items.push({
+        label: "Condición",
+        value: simulation.vehicleCondition === "new" ? "Nuevo" : "Usado"
+      });
+    }
+
+    if (simulation.vehicleValue > 0) {
+      items.push({
+        label: "Valor del vehículo",
+        value: formatCOP(simulation.vehicleValue)
+      });
+    }
+
+    if (simulation.downPayment > 0 || simulationStep >= 4 || flow !== "simulation") {
+      if (simulation.downPayment >= 0 && (simulation.downPayment > 0 || simulation.vehicleValue > 0)) {
+        items.push({
+          label: "Cuota inicial",
+          value: formatCOP(simulation.downPayment)
+        });
+      }
+    }
+
+    if (simulation.term) {
+      items.push({
+        label: "Plazo",
+        value: `${simulation.term} meses`
+      });
+    }
+
+    if (answers.credit_history) {
+      const historyLabels = {
+        current_arrears: "Reporte negativo activo",
+        paid_report: "Reporte pagado / paz y salvo",
+        none: "Sin reportes / primer crédito"
+      };
+
+      items.push({
+        label: "Historial crediticio",
+        value: historyLabels[answers.credit_history] || answers.credit_history
+      });
+    }
+
+    if (answers.employment) {
+      const employmentLabels = {
+        employee: "Empleado",
+        independent: "Independiente",
+        pensioner: "Pensionado",
+        rentier: "Rentista",
+        farmer: "Agricultor",
+        transporter: "Transportador",
+        partner: "Socio"
+      };
+
+      items.push({
+        label: "Actividad u ocupación",
+        value: employmentLabels[answers.employment] || answers.employment
+      });
+    }
+
+    if (answers.activity_months_range) {
+      items.push({
+        label: "Antigüedad",
+        value: answers.activity_months_label || answers.activity_months_range
+      });
+    }
+
+    if (answers.monthly_income) {
+      items.push({
+        label: "Ingresos mensuales",
+        value: formatCOP(answers.monthly_income)
+      });
+    }
+
+    return items;
+  }
+
+  function getVisibleSummaryItems() {
+    const items = getSummaryItems();
+
+    if (flow === "simulation") {
+      // Durante la simulación solo mostramos lo que ya se confirmó.
+      const maxItems = Math.min(simulationStep + 1, 6);
+      return items.slice(0, maxItems);
+    }
+
+    // En precalificación, resultado y codeudor mostramos toda la información
+    // anterior para que el usuario conserve el contexto del proceso.
+    return items;
+  }
+
+  function renderFlowSummary() {
+    const items = getVisibleSummaryItems();
+
+    if (!items.length) {
+      return "";
+    }
+
+    return `
+      <div class="flow-summary" aria-label="Resumen de información completada">
+        <div class="flow-summary-title">Lo que ya has completado</div>
+        <div class="flow-summary-list">
+          ${items.map(item => `
+            <div class="flow-summary-item">
+              <span class="flow-summary-check" aria-hidden="true">✓</span>
+              <div class="flow-summary-content">
+                <span class="flow-summary-label">${escapeSummaryText(item.label)}</span>
+                <strong>${escapeSummaryText(item.value)}</strong>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    `;
+  }
+
+  /* =======================================================
+     SIMULACIÓN
+  =======================================================
+  */
 
   function renderSimulation() {
 
@@ -1470,6 +1617,7 @@ function updateButtons() {
     screen.innerHTML = `
 
       <div class="question">
+        ${renderFlowSummary()}
 
         <span class="eyebrow">
           INICIO
@@ -1556,6 +1704,7 @@ function updateButtons() {
     screen.innerHTML = `
 
       <div class="question">
+        ${renderFlowSummary()}
 
         <span class="eyebrow">
           VEHÍCULO
@@ -1642,6 +1791,7 @@ function updateButtons() {
     screen.innerHTML = `
 
       <div class="question">
+        ${renderFlowSummary()}
 
         <span class="eyebrow">
           FINANCIACIÓN
@@ -1707,6 +1857,7 @@ function updateButtons() {
     screen.innerHTML = `
 
       <div class="question">
+        ${renderFlowSummary()}
 
         <span class="eyebrow">
           FINANCIACIÓN
@@ -1787,6 +1938,7 @@ function updateButtons() {
     screen.innerHTML = `
 
       <div class="question">
+        ${renderFlowSummary()}
 
         <span class="eyebrow">
           FINANCIACIÓN
@@ -2579,6 +2731,7 @@ function bindCurrencyInput(inputId) {
     screen.innerHTML = `
 
       <div class="question">
+        ${renderFlowSummary()}
 
         <span class="eyebrow">
           PRECALIFICACIÓN
@@ -2745,6 +2898,7 @@ function bindCurrencyInput(inputId) {
     screen.innerHTML = `
 
       <div class="question">
+        ${renderFlowSummary()}
 
         <span class="eyebrow">
           PRECALIFICACIÓN
@@ -3668,6 +3822,7 @@ else if (
     screen.innerHTML = `
 
       <div class="question">
+        ${renderFlowSummary()}
 
         <span class="eyebrow">
           INFORMACIÓN DEL CODEUDOR
