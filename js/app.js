@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let simulation = {
     vehicleType: "",
     vehicleCondition: "",
+    vehicleYear: "",
     vehicleValue: 0,
     downPayment: 0,
     term: 0,
@@ -210,6 +211,11 @@ function sendSandboxData(data) {
                   condicion:
                     data.condition,
 
+anio_vehiculo:
+      data.vehicleYear
+        ? Number(data.vehicleYear)
+        : null,
+
                   valor:
                     data.value,
 
@@ -310,7 +316,7 @@ politica_privacidad_version:
           "No fue posible enviar datos a Supabase:",
           error
         );
-
+        throw error;
       });
 
 
@@ -397,6 +403,9 @@ politica_privacidad_version:
       condition:
         simulation.vehicleCondition,
 
+      vehicleYear:
+        simulation.vehicleYear,
+
       value:
         simulation.vehicleValue,
 
@@ -473,8 +482,8 @@ politica_privacidad_version:
      CONFIGURACIÓN
   ======================================================= */
 
-  const PROVISIONAL_MONTHLY_RATE =
-    0.0143;
+  const MONTHLY_RATE_NMV =
+    0.018;
 
 
   const TERM_OPTIONS = [
@@ -530,10 +539,7 @@ politica_privacidad_version:
     simulation: {
 
       monthlyRate:
-        PROVISIONAL_MONTHLY_RATE,
-
-      rateIsProvisional:
-        true,
+        MONTHLY_RATE_NMV,
 
       termOptions:
         TERM_OPTIONS,
@@ -547,18 +553,14 @@ politica_privacidad_version:
             maxTermMonths:
               84,
 
-            maxFinancingPercent:
-              100
 
           },
 
           used: {
 
             maxTermMonths:
-              72,
+              null,
 
-            maxFinancingPercent:
-              90
 
           }
 
@@ -571,8 +573,6 @@ politica_privacidad_version:
             maxTermMonths:
               null,
 
-            maxFinancingPercent:
-              null
 
           },
 
@@ -581,8 +581,6 @@ politica_privacidad_version:
             maxTermMonths:
               null,
 
-            maxFinancingPercent:
-              null
 
           }
 
@@ -734,98 +732,55 @@ politica_privacidad_version:
   }
 
 
+  function getMinimumDownPaymentPercent() {
+
+    if (
+      simulation.vehicleCondition !== "used"
+    ) {
+
+      return 0;
+
+    }
+
+    const year =
+      Number(simulation.vehicleYear);
+
+    if (!Number.isInteger(year)) {
+      return 0;
+    }
+
+    if (year >= 2021) {
+      return 0;
+    }
+
+    if (year >= 2019) {
+      return 10;
+    }
+
+    if (year >= 2017) {
+      return 20;
+    }
+
+    if (year === 2016) {
+      return 30;
+    }
+
+    // Para 2015 o anteriores no se ha definido
+    // una regla de cuota inicial. No inventamos
+    // porcentaje ni rechazo.
+    return 0;
+
+  }
+
+
   function getMinimumDownPayment() {
 
-    const vehicleType =
-      simulation.vehicleType;
-
-    const vehicleCondition =
-      simulation.vehicleCondition;
-
-
-    /*
-      Si todavía no hay información
-      suficiente, no imponemos una
-      cuota mínima.
-    */
-
-    if (
-      !vehicleType ||
-      !vehicleCondition
-    ) {
-
-      return 0;
-
-    }
-
-
-    const financingRules =
-      BUSINESS_RULES
-        .simulation
-        .financing;
-
-
-    const vehicleRules =
-      financingRules[
-        vehicleType
-      ];
-
-
-    if (!vehicleRules) {
-
-      return 0;
-
-    }
-
-
-    const conditionRules =
-      vehicleRules[
-        vehicleCondition
-      ];
-
-
-    if (!conditionRules) {
-
-      return 0;
-
-    }
-
-
-    /*
-      Si el banco puede financiar
-      hasta el 100%, la cuota inicial
-      mínima es 0%.
-    */
-
-    if (
-      conditionRules.maxFinancingPercent ===
-      null ||
-      conditionRules.maxFinancingPercent ===
-      100
-    ) {
-
-      return 0;
-
-    }
-
-
-    /*
-      Ejemplo:
-      financiación máxima 90%
-      => cuota inicial mínima 10%.
-    */
-
-    const minimumDownPaymentPercent =
-      100 -
-      conditionRules.maxFinancingPercent;
-
+    const percentage =
+      getMinimumDownPaymentPercent();
 
     return Math.ceil(
       simulation.vehicleValue *
-      (
-        minimumDownPaymentPercent /
-        100
-      )
+      (percentage / 100)
     );
 
   }
@@ -1036,6 +991,33 @@ politica_privacidad_version:
 
   }
 
+  const SUPABASE_FUNCTION_URL = "https://abvexwzywrjjywhtzzik.functions.supabase.co/procesar-solicitud";
+  async function createZapSignDocument() {
+  try {
+    const response = await fetch(SUPABASE_FUNCTION_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json",  "apikey": SUPABASE_PUBLISHABLE_KEY },
+      body: JSON.stringify({
+        participant_id: participantId
+      })
+    });
+
+    const result = await response.json();
+    console.log("Resultado ZapSign:", result);
+
+    if (result.zapsign_sign_url) {
+      // Redirige al usuario al link de firma
+      window.location.href = result.zapsign_sign_url;
+    } else {
+      alert("No se pudo generar el documento de firma. Estado: " + result.zapsign_status);
+    }
+  } catch (error) {
+    console.error("Error creando documento ZapSign:", error);
+    alert("Ocurrió un error al generar el documento de firma.");
+  }
+}
+
+
 
   /* =======================================================
      BOTONES
@@ -1082,7 +1064,7 @@ function updateButtons() {
     ) {
 
       nextBtn.textContent =
-        simulationStep === 4
+        simulationStep === getLastSimulationStep()
           ? "Calcular →"
           : "Continuar →";
 
@@ -1147,17 +1129,18 @@ function updateButtons() {
       }
 
 
-      if (
-        qualificationResult?.status ===
-        "green"
-      ) {
+if (
+  qualificationResult?.status === "green"
+) {
+  nextBtn.textContent = "Continuar con la firma →";
 
-        nextBtn.textContent =
-          "Continuar con la firma →";
+  // Acción al hacer clic
+  nextBtn.onclick = async () => {
+    await createZapSignDocument();
+  };
 
-        return;
-
-      }
+  return;
+}
 
 
       if (
@@ -1395,6 +1378,16 @@ function updateButtons() {
       });
     }
 
+    if (
+      simulation.vehicleCondition === "used" &&
+      simulation.vehicleYear
+    ) {
+      items.push({
+        label: "Año del vehículo",
+        value: simulation.vehicleYear
+      });
+    }
+
     if (simulation.vehicleValue > 0) {
       items.push({
         label: "Valor del vehículo",
@@ -1402,8 +1395,13 @@ function updateButtons() {
       });
     }
 
-    if (simulation.downPayment > 0 || simulationStep >= 4 || flow !== "simulation") {
-      if (simulation.downPayment >= 0 && (simulation.downPayment > 0 || simulation.vehicleValue > 0)) {
+    const downPaymentStep =
+      simulation.vehicleCondition === "used"
+        ? 4
+        : 3;
+
+    if (simulation.downPayment > 0 || simulationStep >= downPaymentStep || flow !== "simulation") {
+      if (simulation.downPayment >= 0 && (simulation.downPayment > 0 || simulationStep >= downPaymentStep || flow !== "simulation")) {
         items.push({
           label: "Cuota inicial",
           value: formatCOP(simulation.downPayment)
@@ -1470,7 +1468,7 @@ function updateButtons() {
 
     if (flow === "simulation") {
       // Durante la simulación solo mostramos lo que ya se confirmó.
-      const maxItems = Math.min(simulationStep + 1, 6);
+      const maxItems = Math.min(simulationStep + 1, getLastSimulationStep() + 1);
       return items.slice(0, maxItems);
     }
 
@@ -1508,6 +1506,13 @@ function updateButtons() {
      SIMULACIÓN
   =======================================================
   */
+
+  // El flujo de usados tiene un paso adicional (año).
+  // Nuevos: tipo -> condición -> valor -> cuota inicial -> plazo.
+  // Usados: tipo -> condición -> año -> valor -> cuota inicial -> plazo.
+  function getLastSimulationStep() {
+    return simulation.vehicleCondition === "used" ? 5 : 4;
+  }
 
   function renderSimulation() {
 
@@ -1573,35 +1578,44 @@ function updateButtons() {
     }
 
 
-    if (
-      simulationStep === 2
-    ) {
+    if (simulation.vehicleCondition === "used") {
 
-      renderVehicleValue();
+      if (simulationStep === 2) {
+        renderVehicleYear();
+        return;
+      }
 
-      return;
+      if (simulationStep === 3) {
+        renderVehicleValue();
+        return;
+      }
 
-    }
+      if (simulationStep === 4) {
+        renderDownPayment();
+        return;
+      }
 
+      if (simulationStep === 5) {
+        renderTerm();
+        return;
+      }
 
-    if (
-      simulationStep === 3
-    ) {
+    } else {
 
-      renderDownPayment();
+      if (simulationStep === 2) {
+        renderVehicleValue();
+        return;
+      }
 
-      return;
+      if (simulationStep === 3) {
+        renderDownPayment();
+        return;
+      }
 
-    }
-
-
-    if (
-      simulationStep === 4
-    ) {
-
-      renderTerm();
-
-      return;
+      if (simulationStep === 4) {
+        renderTerm();
+        return;
+      }
 
     }
 
@@ -1760,6 +1774,10 @@ function updateButtons() {
         simulation.vehicleCondition =
           value;
 
+        if (value === "new") {
+          simulation.vehicleYear = "";
+        }
+
 
         const availableTerms =
           getAvailableTermOptions();
@@ -1775,6 +1793,74 @@ function updateButtons() {
           simulation.term = 0;
 
         }
+
+      }
+    );
+
+  }
+
+
+  /* =======================================================
+     AÑO VEHÍCULO USADO
+  ======================================================= */
+
+  function renderVehicleYear() {
+
+    screen.innerHTML = `
+
+      <div class="question">
+        ${renderFlowSummary()}
+
+        <span class="eyebrow">
+          VEHÍCULO
+        </span>
+
+        <h2>
+          ¿De qué año es el vehículo?
+        </h2>
+
+        <p>
+          Indica el año del vehículo que quieres financiar.
+        </p>
+
+        <div class="field">
+
+          <label for="vehicleYear">
+            Año del vehículo
+          </label>
+
+          <input
+            id="vehicleYear"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            maxlength="4"
+            placeholder="Ej. 2024"
+            value="${simulation.vehicleYear || ""}"
+          >
+
+        </div>
+
+      </div>
+
+    `;
+
+    const input =
+      document.getElementById("vehicleYear");
+
+    if (!input) {
+      return;
+    }
+
+    input.addEventListener(
+      "input",
+      function () {
+
+        this.value =
+          this.value.replace(/\D/g, "").slice(0, 4);
+
+        simulation.vehicleYear =
+          this.value;
 
       }
     );
@@ -2194,17 +2280,51 @@ function bindCurrencyInput(inputId) {
     }
 
 
+    // USADO: paso 2 = año
     if (
+      simulation.vehicleCondition === "used" &&
       simulationStep === 2
+    ) {
+
+      const input =
+        document.getElementById("vehicleYear");
+
+      const year =
+        input?.value.trim() || "";
+
+      if (!/^\d{4}$/.test(year)) {
+
+        showValidation(
+          "Ingresa el año del vehículo en formato de cuatro dígitos."
+        );
+
+        return false;
+
+      }
+
+      simulation.vehicleYear =
+        year;
+
+      return true;
+
+    }
+
+
+    // NUEVO: paso 2 = valor del vehículo.
+    // USADO: paso 3 = valor del vehículo.
+    const vehicleValueStep =
+      simulation.vehicleCondition === "used"
+        ? 3
+        : 2;
+
+    if (
+      simulationStep === vehicleValueStep
     ) {
 
       const value =
         parseCOP(
-          getInputValue(
-            "vehicleValue"
-          )
+          getInputValue("vehicleValue")
         );
-
 
       if (
         value <= 0
@@ -2218,24 +2338,29 @@ function bindCurrencyInput(inputId) {
 
       }
 
-
       simulation.vehicleValue =
         value;
+
+      return true;
 
     }
 
 
+    // NUEVO: paso 3 = cuota inicial.
+    // USADO: paso 4 = cuota inicial.
+    const downPaymentStep =
+      simulation.vehicleCondition === "used"
+        ? 4
+        : 3;
+
     if (
-      simulationStep === 3
+      simulationStep === downPaymentStep
     ) {
 
       const downPayment =
         parseCOP(
-          getInputValue(
-            "downPayment"
-          )
+          getInputValue("downPayment")
         );
-
 
       if (
         downPayment >
@@ -2250,35 +2375,42 @@ function bindCurrencyInput(inputId) {
 
       }
 
+      const minimumDownPaymentPercent =
+        getMinimumDownPaymentPercent();
 
       const minimumDownPayment =
         getMinimumDownPayment();
 
-
       if (
-        downPayment <
-        minimumDownPayment
+        minimumDownPaymentPercent > 0 &&
+        downPayment < minimumDownPayment
       ) {
 
         showValidation(
-          `Para este vehículo la cuota inicial mínima es de ${formatCOP(
+          `Para un vehículo usado modelo ${simulation.vehicleYear}, la cuota inicial mínima es del ${minimumDownPaymentPercent}% (${formatCOP(
             minimumDownPayment
-          )}.`
+          )}).`
         );
 
         return false;
 
       }
 
-
       simulation.downPayment =
         downPayment;
+
+      return true;
 
     }
 
 
+    // NUEVO: paso 4 = plazo.
+    // USADO: paso 5 = plazo.
+    const termStep =
+      getLastSimulationStep();
+
     if (
-      simulationStep === 4
+      simulationStep === termStep
     ) {
 
       if (
@@ -2293,10 +2425,8 @@ function bindCurrencyInput(inputId) {
 
       }
 
-
       const availableTerms =
         getAvailableTermOptions();
-
 
       if (
         !availableTerms.includes(
@@ -2312,13 +2442,14 @@ function bindCurrencyInput(inputId) {
 
       }
 
+      return true;
+
     }
 
 
     return true;
 
   }
-
 
   /* =======================================================
      VALIDACIÓN VISUAL
@@ -2534,6 +2665,25 @@ function bindCurrencyInput(inputId) {
           </div>
 
 
+          ${
+            simulation.vehicleCondition === "used"
+              ? `
+                <div class="summary-item">
+
+                  <span class="summary-label">
+                    Año vehículo
+                  </span>
+
+                  <strong>
+                    ${simulation.vehicleYear}
+                  </strong>
+
+                </div>
+              `
+              : ""
+          }
+
+
           <div class="summary-item">
 
             <span class="summary-label">
@@ -2609,25 +2759,21 @@ function bindCurrencyInput(inputId) {
         </div>
 
 
-        <div class="notice">
-
-          <strong>
-            Cálculo referencial
-          </strong>
-
-          <p>
-            ${
-              BUSINESS_RULES
-                .simulation
-                .rateIsProvisional
-
-                ? "La cuota utiliza una tasa mensual provisional para este prototipo. Las condiciones definitivas estarán sujetas a validación de Arrankar."
-
-                : "La cuota utiliza la tasa configurada para el producto. Las condiciones definitivas estarán sujetas a validación."
-            }
-          </p>
-
-        </div>
+<div class="notice">
+ 
+<strong>
+Información importante
+</strong>
+ 
+<p>
+El monto aprobado y la tasa dependerán de tu información financiera y nuestro análisis crediticio.
+</p>
+ 
+<p>
+El valor indicado no incluye seguros.
+</p>
+ 
+</div>
 
 
         <div class="simulation-next-message">
@@ -3439,6 +3585,11 @@ else if (
         "Error guardando participante:",
         error
       );
+        alert(
+    "No fue posible guardar tu solicitud. Intenta nuevamente."
+  );
+
+  return;
 
     }
 
@@ -4249,6 +4400,45 @@ else if (
 
   }
 
+  async function saveCodeudorData() {
+  const codeudorData = {
+    participant_id: participantId,
+    nombres_apellidos: document.getElementById("codeudorName").value,
+    correo: document.getElementById("codeudorEmail").value,
+    celular: document.getElementById("codeudorPhone").value,
+    empleo: document.getElementById("codeudorEmployment").value
+  };
+
+  const { error } = await supabaseClient
+    .from("codeudores")
+    .insert([codeudorData]);
+
+  if (error) {
+    console.error("Error guardando codeudor:", error);
+    alert("No fue posible guardar el codeudor.");
+    return;
+  }
+
+  // Una vez guardado, ahora sí llamamos a la Edge Function
+  await createZapSignDocument();
+}
+
+
+function renderCodeudorForm() {
+  flow = "codeudor";
+  screen.innerHTML = `
+    <h2>Información del Codeudor</h2>
+    <input id="codeudorName" placeholder="Nombre completo" />
+    <input id="codeudorEmail" type="email" placeholder="Correo electrónico" />
+    <input id="codeudorPhone" placeholder="Teléfono" />
+    <input id="codeudorEmployment" placeholder="Ocupación" />
+    <button id="saveCodeudorBtn">Guardar y continuar →</button>
+  `;
+
+  document.getElementById("saveCodeudorBtn").onclick = saveCodeudorData;
+}
+
+
 
   /* =======================================================
      GUARDAR CODEUDOR - SANDBOX
@@ -4269,7 +4459,6 @@ async function saveCodeudorSandbox() {
   };
 
   try {
-    // Primero verificamos si ya existe un codeudor para este participante
     const { data: existingCodeudor, error: selectError } =
       await supabaseClient
         .from("codeudores")
@@ -4278,15 +4467,11 @@ async function saveCodeudorSandbox() {
         .maybeSingle();
 
     if (selectError) {
-      console.error(
-        "Error buscando codeudor existente en Supabase:",
-        selectError
-      );
+      console.error("Error buscando codeudor existente:", selectError);
       return false;
     }
 
     if (existingCodeudor) {
-      // Si ya existe, actualizamos el mismo registro
       const { error: updateError } =
         await supabaseClient
           .from("codeudores")
@@ -4294,53 +4479,30 @@ async function saveCodeudorSandbox() {
           .eq("id", existingCodeudor.id);
 
       if (updateError) {
-        console.error(
-          "Error actualizando codeudor en Supabase:",
-          updateError
-        );
+        console.error("Error actualizando codeudor:", updateError);
         return false;
       }
-
-
     } else {
-      // Si no existe, lo creamos por primera vez
       const { error: insertError } =
         await supabaseClient
           .from("codeudores")
-          .insert([
-            {
-              ...codeudorData,
-              created_at: fecha
-            }
-          ]);
+          .insert([{ ...codeudorData, created_at: fecha }]);
 
       if (insertError) {
-        console.error(
-          "Error insertando codeudor en Supabase:",
-          insertError
-        );
+        console.error("Error insertando codeudor:", insertError);
         return false;
       }
-
-
     }
 
-    logSandboxEvent(
-      "codeudor",
-      "completó información del codeudor"
-    );
-
+    logSandboxEvent("codeudor", "completó información del codeudor");
     return true;
 
   } catch (error) {
-    console.error(
-      "Error conectando con Supabase para guardar codeudor:",
-      error
-    );
-
+    console.error("Error conectando con Supabase:", error);
     return false;
   }
 }
+
 
 
   /* =======================================================
@@ -4555,7 +4717,7 @@ privacyAcceptedAt = new Date().toISOString();
 
       if (
         simulationStep <
-        4
+        getLastSimulationStep()
       ) {
 
         logSandboxEvent(
@@ -4752,27 +4914,25 @@ privacyAcceptedAt = new Date().toISOString();
     ===================================================== */
 
 if (flow === "codeudor") {
-
   if (!validateCodeudor()) {
     return;
   }
 
-  const saved =
-    await saveCodeudorSandbox();
+  const saved = await saveCodeudorSandbox();
 
   if (!saved) {
-
-    alert(
-      "No fue posible guardar la información del codeudor. Intenta nuevamente."
-    );
-
+    alert("No fue posible guardar la información del codeudor. Intenta nuevamente.");
     return;
   }
 
-  continueToSignature();
+  // Espera un pequeño delay para asegurar que el insert se confirme
+  await new Promise(resolve => setTimeout(resolve, 500));
 
+  // Ahora sí llama a la Edge Function
+  await createZapSignDocument();
   return;
 }
+
 
 
     /* =====================================================
@@ -4858,7 +5018,7 @@ if (flow === "codeudor") {
     ) {
 
       simulationStep =
-        4;
+        5;
 
 
       renderSimulation();
@@ -5034,6 +5194,8 @@ if (
 
       vehicleCondition: "",
 
+      vehicleYear: "",
+
       vehicleValue: 0,
 
       downPayment: 0,
@@ -5111,36 +5273,44 @@ if (
   }
 
 
-  function closePrivacyPolicy() {
+function closePrivacyPolicy() {
 
-    const privacyModal =
-      document.getElementById(
-        "privacyModal"
-      );
+  const privacyModal =
+    document.getElementById(
+      "privacyModal"
+    );
 
-
-    if (!privacyModal) {
-      return;
-    }
-
-
-    privacyModal.classList.remove(
-      "is-open"
+  const openPrivacyModal =
+    document.getElementById(
+      "openPrivacyModal"
     );
 
 
-    privacyModal.setAttribute(
-      "aria-hidden",
-      "true"
-    );
-
-    openPrivacyModal.focus();
-
-
-    document.body.style.overflow =
-      "";
-
+  if (!privacyModal) {
+    return;
   }
+
+
+  privacyModal.classList.remove(
+    "is-open"
+  );
+
+
+  privacyModal.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+
+  if (openPrivacyModal) {
+    openPrivacyModal.focus();
+  }
+
+
+  document.body.style.overflow =
+    "";
+
+}
 
 
   /* =======================================================
