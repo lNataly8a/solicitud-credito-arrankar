@@ -77,7 +77,8 @@ document.addEventListener("DOMContentLoaded", () => {
     documentNumber: "",
     phone: "",
     email: "",
-    employment: ""
+    employment: "",
+    relationship: ""
   };
 
 
@@ -1020,6 +1021,82 @@ politica_privacidad_version:
 
 
   /* =======================================================
+     COMPARTIR FORMULARIO
+  ======================================================= */
+
+  async function shareApplicationForm() {
+
+    const shareUrl =
+      window.location.href;
+
+    const shareTitle =
+      "Solicitud de crédito | Arrankar";
+
+    const shareText =
+      "Te comparto el formulario de solicitud de crédito de Arrankar.";
+
+    /*
+      En celular, los navegadores compatibles muestran
+      el menú nativo de compartir mediante Web Share API.
+
+      En PC, o cuando Web Share API no está disponible,
+      copiamos el enlace del formulario al portapapeles.
+    */
+
+    try {
+
+      if (
+        navigator.share
+      ) {
+
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl
+        });
+
+        return;
+
+      }
+
+    } catch (error) {
+
+      if (
+        error?.name ===
+        "AbortError"
+      ) {
+        return;
+      }
+
+    }
+
+    try {
+
+      await navigator.clipboard.writeText(
+        shareUrl
+      );
+
+      alert(
+        "El enlace del formulario se copió al portapapeles."
+      );
+
+    } catch (error) {
+
+      console.error(
+        "No fue posible compartir o copiar el formulario:",
+        error
+      );
+
+      alert(
+        "No fue posible compartir el formulario. Copia el enlace de esta página y compártelo."
+      );
+
+    }
+
+  }
+
+
+  /* =======================================================
      BOTONES
   ======================================================= */
 
@@ -1133,12 +1210,6 @@ if (
   qualificationResult?.status === "green"
 ) {
   nextBtn.textContent = "Continuar con la firma →";
-
-  // Acción al hacer clic
-  nextBtn.onclick = async () => {
-    await createZapSignDocument();
-  };
-
   return;
 }
 
@@ -1149,7 +1220,7 @@ if (
       ) {
 
         nextBtn.textContent =
-          "Nueva solicitud";
+          "Compartir formulario";
 
         return;
 
@@ -1804,7 +1875,56 @@ if (
      AÑO VEHÍCULO USADO
   ======================================================= */
 
+  function getVehicleYearOptions() {
+
+    /*
+      Rango dinámico:
+      diez años hacia atrás hasta un año adelante.
+
+      En 2026:
+      2016 a 2027.
+
+      El rango se actualiza automáticamente
+      cuando cambia el año calendario.
+    */
+
+    const currentYear =
+      new Date().getFullYear();
+
+    const minimumYear =
+      currentYear - 10;
+
+    const maximumYear =
+      currentYear + 1;
+
+    const years = [];
+
+    for (
+      let year = maximumYear;
+      year >= minimumYear;
+      year--
+    ) {
+      years.push(year);
+    }
+
+    return years;
+
+  }
+
+
   function renderVehicleYear() {
+
+    const availableYears =
+      getVehicleYearOptions();
+
+    if (
+      simulation.vehicleYear &&
+      !availableYears.includes(
+        Number(simulation.vehicleYear)
+      )
+    ) {
+      simulation.vehicleYear = "";
+    }
 
     screen.innerHTML = `
 
@@ -1820,7 +1940,7 @@ if (
         </h2>
 
         <p>
-          Indica el año del vehículo que quieres financiar.
+          Selecciona el año del vehículo que quieres financiar.
         </p>
 
         <div class="field">
@@ -1829,15 +1949,28 @@ if (
             Año del vehículo
           </label>
 
-          <input
+          <select
             id="vehicleYear"
-            type="text"
-            inputmode="numeric"
-            autocomplete="off"
-            maxlength="4"
-            placeholder="Ej. 2024"
-            value="${simulation.vehicleYear || ""}"
           >
+
+            <option value="">
+              Selecciona una opción
+            </option>
+
+            ${availableYears.map(year => `
+              <option
+                value="${year}"
+                ${
+                  Number(simulation.vehicleYear) === year
+                    ? "selected"
+                    : ""
+                }
+              >
+                ${year}
+              </option>
+            `).join("")}
+
+          </select>
 
         </div>
 
@@ -1853,11 +1986,8 @@ if (
     }
 
     input.addEventListener(
-      "input",
+      "change",
       function () {
-
-        this.value =
-          this.value.replace(/\D/g, "").slice(0, 4);
 
         simulation.vehicleYear =
           this.value;
@@ -4014,6 +4144,89 @@ else if (
 
         <div class="field">
 
+          <label for="codeudorRelationship">
+            Parentesco con el solicitante
+          </label>
+
+          <select
+            id="codeudorRelationship"
+          >
+
+            <option value="">
+              Selecciona una opción
+            </option>
+
+            <option value="padre" ${
+              codeudor.relationship === "padre"
+                ? "selected"
+                : ""
+            }>
+              Padre
+            </option>
+
+            <option value="madre" ${
+              codeudor.relationship === "madre"
+                ? "selected"
+                : ""
+            }>
+              Madre
+            </option>
+
+            <option value="hermano" ${
+              codeudor.relationship === "hermano"
+                ? "selected"
+                : ""
+            }>
+              Hermano(a)
+            </option>
+
+            <option value="hijo" ${
+              codeudor.relationship === "hijo"
+                ? "selected"
+                : ""
+            }>
+              Hijo(a)
+            </option>
+
+            <option value="abuelo" ${
+              codeudor.relationship === "abuelo"
+                ? "selected"
+                : ""
+            }>
+              Abuelo(a)
+            </option>
+
+            <option value="tio" ${
+              codeudor.relationship === "tio"
+                ? "selected"
+                : ""
+            }>
+              Tío(a)
+            </option>
+
+            <option value="sobrino" ${
+              codeudor.relationship === "sobrino"
+                ? "selected"
+                : ""
+            }>
+              Sobrino(a)
+            </option>
+
+            <option value="nieto" ${
+              codeudor.relationship === "nieto"
+                ? "selected"
+                : ""
+            }>
+              Nieto(a)
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="field">
+
           <label for="codeudorDocumentType">
             Tipo de documento
           </label>
@@ -4268,6 +4481,12 @@ else if (
       )?.value.trim() || "";
 
 
+    const relationship =
+      document.getElementById(
+        "codeudorRelationship"
+      )?.value || "";
+
+
     const documentType =
       document.getElementById(
         "codeudorDocumentType"
@@ -4302,6 +4521,17 @@ else if (
 
       showValidation(
         "Ingresa los nombres y apellidos del codeudor."
+      );
+
+      return false;
+
+    }
+
+
+    if (!relationship) {
+
+      showValidation(
+        "Selecciona el parentesco del codeudor con el solicitante."
       );
 
       return false;
@@ -4391,7 +4621,9 @@ else if (
 
       email,
 
-      employment
+      employment,
+
+      relationship
 
     };
 
@@ -4455,6 +4687,7 @@ async function saveCodeudorSandbox() {
     celular: codeudor.phone,
     correo: codeudor.email,
     actividad_ocupacion: codeudor.employment,
+    parentesco: codeudor.relationship,
     updated_at: fecha
   };
 
@@ -4622,6 +4855,24 @@ async function saveCodeudorSandbox() {
   async function next() {
 
     clearValidation();
+
+
+    /*
+      En el resultado RED, el botón principal
+      cambia de función: comparte el enlace
+      del formulario en lugar de iniciar otra solicitud.
+    */
+
+    if (
+      flow === "final-result" &&
+      qualificationResult?.status === "red"
+    ) {
+
+      shareApplicationForm();
+
+      return;
+
+    }
 
 
     /* =====================================================
@@ -5180,7 +5431,9 @@ if (
 
       email: "",
 
-      employment: ""
+      employment: "",
+
+      relationship: ""
 
     };
 
