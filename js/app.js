@@ -50,6 +50,61 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let answers = {};
 
+  // Datos completos que alimentan la plantilla de solicitante A/B.
+  // Los campos opcionales pueden permanecer vacíos.
+  let applicantData = {
+    nombreCompleto: "",
+    tipoDocumento: "",
+    numeroDocumento: "",
+    fechaExpedicion: "",
+    genero: "",
+    fechaNacimiento: "",
+    lugarNacimiento: "",
+    nacionalidad: "",
+    estadoCivil: "",
+    celular: "",
+    correo: "",
+    direccion: "",
+    tipoVivienda: "",
+    ciudad: "",
+    departamento: "",
+    personasCargo: "",
+    nivelEstudios: "",
+    ocupacion: "",
+    tipoContrato: "",
+    empresa: "",
+    nitEmpresa: "",
+    actividadEmpresa: "",
+    ciudadEmpresa: "",
+    telefonoEmpresa: "",
+    cargo: "",
+    tiempoActividad: "",
+    salario: "",
+    otrosIngresos: "",
+    descripcionOtrosIngresos: "",
+    gastosFinancieros: "",
+    gastosPersonales: "",
+    totalActivos: "",
+    totalPasivos: "",
+    declaraRenta: "",
+    operacionesMonedaExtranjera: "",
+    poseeBienRaiz: "",
+    tipoBienRaiz: "",
+    ciudadBien: "",
+    valorBien: "",
+    poseeVehiculo: "",
+    tipoServicio: "",
+    tipoVehiculoActual: "",
+    placa: "",
+    modelo: "",
+    valorComercial: "",
+    referenciaPersonal: "",
+    telefonoReferenciaPersonal: "",
+    referenciaComercial: "",
+    nitReferenciaComercial: "",
+    telefonoReferenciaComercial: ""
+  };
+
   let participantEmail = "";
 
   let qualificationResult = null;
@@ -256,8 +311,11 @@ anio_vehiculo:
 politica_privacidad_fecha:
   data.politica_privacidad_fecha,
 
-politica_privacidad_version:
-  data.politica_privacidad_version
+                  politica_privacidad_version:
+  data.politica_privacidad_version,
+
+                  datos_solicitud:
+                    data.datos_solicitud || {}
 
                 }
               ]);
@@ -443,8 +501,11 @@ politica_privacidad_version:
 politica_privacidad_fecha:
   privacyAcceptedAt,
 
-politica_privacidad_version:
-  PRIVACY_POLICY_VERSION
+      politica_privacidad_version:
+  PRIVACY_POLICY_VERSION,
+
+      datos_solicitud:
+        applicantData
 
     };
 
@@ -1033,7 +1094,13 @@ politica_privacidad_version:
       "Solicitud de crédito | Arrankar";
 
     const shareText =
-      "Te comparto el formulario de solicitud de crédito de Arrankar.";
+      `¡Hola! Te escribo porque estoy en el proceso de comprar un vehículo con Arrankar. Para avanzar con la financiación, me sugirieron realizar la precalificación con el apoyo de un familiar que tenga buen historial crediticio.
+
+¿Me ayudarías diligenciando este formulario rápido? Solo toma 2 minutos y es para evaluar la viabilidad digital:
+
+${shareUrl}
+
+¡Mil gracias por la ayuda! Me avisas apenas lo mires.`;
 
     /*
       En celular, los navegadores compatibles muestran
@@ -1051,8 +1118,7 @@ politica_privacidad_version:
 
         await navigator.share({
           title: shareTitle,
-          text: shareText,
-          url: shareUrl
+          text: shareText
         });
 
         return;
@@ -1073,11 +1139,11 @@ politica_privacidad_version:
     try {
 
       await navigator.clipboard.writeText(
-        shareUrl
+        shareText
       );
 
       alert(
-        "El enlace del formulario se copió al portapapeles."
+        "El mensaje para compartir el formulario se copió al portapapeles."
       );
 
     } catch (error) {
@@ -1110,7 +1176,7 @@ function updateButtons() {
 
   backBtn.hidden =
     flow === "welcome" ||
-    flow === "final-result";
+    (flow === "final-result" && qualificationResult?.status !== "red");
 
   nextBtn.hidden =
     false;
@@ -1167,6 +1233,20 @@ function updateButtons() {
 
 
     /* ---------------------------------------------------
+       DATOS COMPLETOS DEL SOLICITANTE
+    --------------------------------------------------- */
+
+    if (flow === "applicant-data") {
+
+      nextBtn.textContent =
+        "Guardar y continuar →";
+
+      return;
+
+    }
+
+
+    /* ---------------------------------------------------
        PRECALIFICACIÓN
     --------------------------------------------------- */
 
@@ -1189,43 +1269,28 @@ function updateButtons() {
        RESULTADO FINAL
     --------------------------------------------------- */
 
-    if (
-      flow === "final-result"
-    ) {
+    if (flow === "final-result") {
 
-      if (
-        qualificationResult?.status ===
-        "yellow"
-      ) {
-
+      if (qualificationResult?.status === "yellow") {
         nextBtn.textContent =
-          "Completar información del codeudor →";
-
+          "Continuar con mi familiar →";
         return;
-
       }
 
-
-if (
-  qualificationResult?.status === "green"
-) {
-  nextBtn.textContent = "Continuar con la firma →";
-  return;
-}
-
-
-      if (
-        qualificationResult?.status ===
-        "red"
-      ) {
-
+      if (qualificationResult?.status === "green") {
         nextBtn.textContent =
-          "Compartir formulario";
-
+          "Continuar con la firma →";
         return;
-
       }
 
+      if (qualificationResult?.status === "red") {
+        nextBtn.textContent =
+          "Enviar formulario a un familiar";
+        backBtn.hidden = false;
+        backBtn.textContent =
+          "Iniciar otra solicitud";
+        return;
+      }
     }
 
 
@@ -3692,6 +3757,206 @@ else if (
   }
 
 
+
+  /* =======================================================
+     DATOS COMPLETOS DEL SOLICITANTE
+  ======================================================= */
+
+  const APPLICANT_FORM_SECTIONS = [
+    {
+      title: "Datos personales",
+      fields: [
+        ["nombreCompleto", "Nombre completo", "text"],
+        ["tipoDocumento", "Tipo documento", "text"],
+        ["numeroDocumento", "Número documento", "number"],
+        ["fechaExpedicion", "Fecha expedición", "date"],
+        ["genero", "Género", "text"],
+        ["fechaNacimiento", "Fecha nacimiento", "date"],
+        ["lugarNacimiento", "Lugar nacimiento", "text"],
+        ["nacionalidad", "Nacionalidad", "text"],
+        ["estadoCivil", "Estado civil", "text"],
+        ["celular", "Celular", "tel"],
+        ["correo", "Correo", "email"],
+        ["direccion", "Dirección", "text"],
+        ["tipoVivienda", "Tipo vivienda", "text"],
+        ["ciudad", "Ciudad", "text"],
+        ["departamento", "Departamento", "text"],
+        ["personasCargo", "Personas a cargo", "number"],
+        ["nivelEstudios", "Nivel de estudios", "text"]
+      ]
+    },
+    {
+      title: "Información laboral",
+      fields: [
+        ["ocupacion", "Ocupación", "text"],
+        ["tipoContrato", "Tipo contrato", "text"],
+        ["empresa", "Empresa", "text"],
+        ["nitEmpresa", "NIT empresa", "number"],
+        ["actividadEmpresa", "Actividad empresa", "text"],
+        ["ciudadEmpresa", "Ciudad empresa", "text"],
+        ["telefonoEmpresa", "Teléfono empresa", "tel"],
+        ["cargo", "Cargo", "text"],
+        ["tiempoActividad", "Tiempo actividad", "text"]
+      ]
+    },
+    {
+      title: "Información financiera",
+      fields: [
+        ["salario", "Salario", "currency"],
+        ["otrosIngresos", "Otros ingresos", "currency"],
+        ["descripcionOtrosIngresos", "Descripción otros ingresos", "text"],
+        ["gastosFinancieros", "Gastos financieros", "currency"],
+        ["gastosPersonales", "Gastos personales", "currency"]
+      ]
+    },
+    {
+      title: "Patrimonio",
+      fields: [
+        ["totalActivos", "Total activos", "currency"],
+        ["totalPasivos", "Total pasivos", "currency"],
+        ["declaraRenta", "Declara renta", "text"],
+        ["operacionesMonedaExtranjera", "Operaciones moneda extranjera", "text"]
+      ]
+    },
+    {
+      title: "Bien raíz",
+      fields: [
+        ["poseeBienRaiz", "Posee bien raíz", "text"],
+        ["tipoBienRaiz", "Tipo bien raíz", "text"],
+        ["ciudadBien", "Ciudad bien", "text"],
+        ["valorBien", "Valor bien", "currency"]
+      ]
+    },
+    {
+      title: "Vehículos actuales",
+      fields: [
+        ["poseeVehiculo", "Posee vehículo", "text"],
+        ["tipoServicio", "Tipo servicio", "text"],
+        ["tipoVehiculoActual", "Tipo vehículo", "text"],
+        ["placa", "Placa", "text"],
+        ["modelo", "Modelo", "number"],
+        ["valorComercial", "Valor comercial", "currency"]
+      ]
+    },
+    {
+      title: "Referencias",
+      fields: [
+        ["referenciaPersonal", "Referencia personal", "text"],
+        ["telefonoReferenciaPersonal", "Teléfono referencia", "tel"],
+        ["referenciaComercial", "Referencia comercial", "text"],
+        ["nitReferenciaComercial", "NIT referencia comercial", "number"],
+        ["telefonoReferenciaComercial", "Teléfono referencia comercial", "tel"]
+      ]
+    }
+  ];
+
+  function applicantFieldHtml(id, label, type) {
+    const value = applicantData[id] ?? "";
+    const safeValue = String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+
+    if (type === "currency") {
+      const formatted = safeValue && parseCOP(value)
+        ? new Intl.NumberFormat("es-CO").format(parseCOP(value))
+        : "";
+
+      return `
+        <div class="field">
+          <label for="applicant_${id}">${label}</label>
+          <div class="currency-input">
+            <span class="currency-symbol">$</span>
+            <input id="applicant_${id}" type="text" inputmode="numeric" autocomplete="off" value="${formatted}">
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="field">
+        <label for="applicant_${id}">${label}</label>
+        <input id="applicant_${id}" type="${type}" autocomplete="off" value="${safeValue}">
+      </div>
+    `;
+  }
+
+  function renderApplicantData() {
+    flow = "applicant-data";
+    setInfoVisibility(false);
+    updateProgress(4);
+
+    screen.innerHTML = `
+      <div class="question applicant-form">
+        ${renderFlowSummary()}
+
+        <span class="eyebrow">DATOS DE LA SOLICITUD</span>
+        <h2>Completemos tus datos</h2>
+        <p>Esta información nos permite preparar correctamente el documento de solicitud.</p>
+
+        ${APPLICANT_FORM_SECTIONS.map(section => `
+          <div class="applicant-section">
+            <h3>${section.title}</h3>
+            ${section.fields.map(([id, label, type]) => applicantFieldHtml(id, label, type)).join("")}
+          </div>
+        `).join("")}
+      </div>
+    `;
+
+    APPLICANT_FORM_SECTIONS.forEach(section => {
+      section.fields.forEach(([id, , type]) => {
+        const input = document.getElementById(`applicant_${id}`);
+        if (!input) return;
+
+        input.addEventListener("input", () => {
+          if (type === "currency") {
+            const digits = input.value.replace(/\D/g, "");
+            const numericValue = Number(digits) || 0;
+
+            input.value = digits
+              ? new Intl.NumberFormat("es-CO", { maximumFractionDigits: 0 }).format(numericValue)
+              : "";
+
+            applicantData[id] = numericValue;
+            return;
+          }
+
+          if (type === "number" || type === "tel") {
+            input.value = input.value.replace(/\D/g, "");
+          }
+
+          applicantData[id] = input.value;
+        });
+
+        if (type === "currency") {
+          formatInputCurrency(input);
+          applicantData[id] = parseCOP(input.value);
+        }
+      });
+    });
+
+    updateButtons();
+  }
+
+  function captureApplicantData() {
+    APPLICANT_FORM_SECTIONS.forEach(section => {
+      section.fields.forEach(([id, , type]) => {
+        const input = document.getElementById(`applicant_${id}`);
+        if (!input) return;
+        applicantData[id] = type === "currency"
+          ? parseCOP(input.value)
+          : input.value.trim();
+      });
+    });
+
+    if (!applicantData.correo) {
+      applicantData.correo = participantEmail;
+    }
+
+    return true;
+  }
+
   /* =======================================================
      FINALIZAR PRECALIFICACIÓN
   ======================================================= */
@@ -3839,238 +4104,101 @@ else if (
     flow =
       "final-result";
 
+    setInfoVisibility(false);
 
-    setInfoVisibility(
-      false
-    );
+    updateProgress(5, 5);
 
-
-    updateProgress(
-      5,
-      5
-    );
-
-
-    const result =
-      qualificationResult;
-
+    const result = qualificationResult;
 
     if (!result) {
-
       resetFlow();
-
       return;
-
     }
 
-
-    let extraContent = "";
-
-
-    /* ---------------------------------------------------
-       ROJO
-    --------------------------------------------------- */
-
-    if (
-      result.status ===
-      "red"
-    ) {
-
-      extraContent = `
-
-        <ul>
-
-          <li>
-            En este momento no podemos continuar con tu solicitud.
-          </li>
-
-          <li>
-            Si lo deseas, puedes considerar realizar la solicitud
-            con un familiar que cumpla con las condiciones requeridas.
-          </li>
-
-        </ul>
-
-      `;
-
-    }
-
-
-    /* ---------------------------------------------------
-       AMARILLO
-    --------------------------------------------------- */
-
-    if (
-      result.status ===
-      "yellow"
-    ) {
-
-      extraContent = `
-
-        <ul>
-
-          <li>
-            Para continuar con tu solicitud, necesitas contar
-            con un codeudor.
-          </li>
-
-          <li>
-            El codeudor deberá cumplir con las condiciones
-            requeridas para la solicitud.
-          </li>
-
-        </ul>
-
-      `;
-
-    }
-
-
-    /* ---------------------------------------------------
-       VERDE
-    --------------------------------------------------- */
-
-    if (
-      result.status ===
-      "green"
-    ) {
-
-      extraContent = `
-
-        <ul>
-
-          <li>
-            Tu perfil cumple con las condiciones iniciales
-            para continuar con la solicitud.
-          </li>
-
-          <li>
-            Hemos recibido correctamente la información
-            proporcionada.
-          </li>
-
-        </ul>
-
-      `;
-
-    }
-
-
+    let title = "";
+    let subtitle = "";
+    let cardContent = "";
     let followup = "";
 
-
-    if (
-      result.status ===
-      "red"
-    ) {
-
-      followup = `
-
+    if (result.status === "red") {
+      title = "Evaluemos otra alternativa para ti";
+      subtitle = "Tu perfil actual no cumple con las condiciones de crédito";
+      cardContent = `
         <p>
-
-          Si tienes alguna inquietud, puedes comunicarte
-          con nuestro equipo para conocer otras alternativas.
-
+          Identificamos compromisos financieros pendientes que impiden la aprobación inmediata en este momento.
         </p>
-
+        <p>
+          Una excelente opción es realizar la solicitud a través de un familiar cercano con ingresos e historial al día. Nosotros nos encargamos de guiar todo el proceso.
+        </p>
       `;
-
+      followup = `
+        <p>
+          Si quieres, puedes enviarle el formulario a ese familiar y continuar con su apoyo.
+        </p>
+      `;
     }
 
-
-    if (
-      result.status ===
-      "yellow"
-    ) {
-
-      followup = `
-
+    if (result.status === "yellow") {
+      title = "Sigamos adelante juntos";
+      subtitle = "Tu perfil puede continuar con el apoyo de un familiar";
+      cardContent = `
         <p>
-
-          El siguiente paso será completar la información
-          correspondiente al codeudor para continuar con
-          tu solicitud.
-
+          Tu solicitud necesita un poco de apoyo adicional para poder continuar.
         </p>
-
+        <p>
+          Puedes avanzar con un familiar cercano que tenga ingresos e historial al día. Te acompañaremos durante el proceso para que sea sencillo.
+        </p>
       `;
-
+      followup = `
+        <p>
+          En el siguiente paso te pediremos los datos de la persona que te acompañará como segundo firmante.
+        </p>
+      `;
     }
 
-
-    if (
-      result.status ===
-      "green"
-    ) {
-
-      followup = `
-
+    if (result.status === "green") {
+      title = "¡Vamos por buen camino!";
+      subtitle = "Tu perfil cumple con las condiciones iniciales";
+      cardContent = `
         <p>
-
-          Tu solicitud puede continuar al siguiente paso.
-          Nuestro equipo se encargará de acompañarte
-          durante el proceso.
-
+          Tenemos buenas noticias: tu perfil cumple con las condiciones iniciales para continuar.
         </p>
-
+        <p>
+          Ahora podemos avanzar con el documento de firma. Te acompañaremos en los siguientes pasos.
+        </p>
       `;
-
+      followup = `
+        <p>
+          Cuando estés listo, continúa para avanzar con la firma.
+        </p>
+      `;
     }
-
 
     screen.innerHTML = `
-
       <div class="final-result">
 
         <div class="final-thanks">
-
-          <h2>
-            Gracias por participar
-          </h2>
-
-          <p>
-            Hemos recibido correctamente tu información.
-          </p>
-
+          <h2>Gracias por confiar en Arrankar</h2>
+          <p>${subtitle}</p>
         </div>
 
+        <span class="eyebrow">RESULTADO</span>
 
-        <span class="eyebrow">
-          RESULTADO
-        </span>
-
-
-        <h2>
-          ${result.title}
-        </h2>
-
+        <h2>${title}</h2>
 
         <div class="result ${result.status}">
-
-          <p>
-            ${result.reason}
-          </p>
-
-          ${extraContent}
-
+          ${cardContent}
         </div>
 
-
         <div class="result-followup">
-
           ${followup}
-
         </div>
 
       </div>
-
     `;
 
-
     updateButtons();
-
   }
-
 
   /* =======================================================
      CODEUDOR
@@ -4154,6 +4282,22 @@ else if (
 
             <option value="">
               Selecciona una opción
+            </option>
+
+            <option value="esposo" ${
+              codeudor.relationship === "esposo"
+                ? "selected"
+                : ""
+            }>
+              Esposo(a)
+            </option>
+
+            <option value="compañero_permanente" ${
+              codeudor.relationship === "compañero_permanente"
+                ? "selected"
+                : ""
+            }>
+              Compañero(a) permanente
             </option>
 
             <option value="padre" ${
@@ -4742,31 +4886,30 @@ async function saveCodeudorSandbox() {
      PREPARAR FIRMA
   ======================================================= */
 
-  async function continueToSignature() {
+async function continueToSignature() {
 
-    clearValidation();
+  clearValidation();
 
+  logSandboxEvent(
+    "firma",
+    "solicitó continuar con firma"
+  );
 
-    /*
-      Todavía no hacemos una llamada a ZapSign.
+  const signUrl =
+    qualificationResult?.zapsign_sign_url;
 
-      El siguiente paso será crear una Edge Function
-      que reciba participant_id y codeudor,
-      genere el documento correspondiente
-      y devuelva la URL segura de firma.
+  if (signUrl) {
 
-      Por ahora dejamos la transición preparada.
-    */
+    window.location.href =
+      signUrl;
 
-    logSandboxEvent(
-      "firma",
-      "solicitó continuar con firma"
-    );
-
-
-    renderSignaturePending();
-
+    return;
   }
+
+  alert(
+    "No encontramos el enlace de firma. Intenta nuevamente."
+  );
+}
 
 
   /* =======================================================
@@ -4931,6 +5074,9 @@ privacyAcceptedAt = new Date().toISOString();
   participantEmail =
     email;
 
+  applicantData.correo =
+    email;
+
   simulationStep =
     0;
 
@@ -5083,20 +5229,37 @@ privacyAcceptedAt = new Date().toISOString();
 
         qualificationStep++;
 
-
         renderQualification();
-
 
         return;
 
       }
 
+      /*
+        Si la respuesta de historial indica mora actual,
+        la regla RED no requiere datos adicionales del solicitante
+        porque no se ejecuta ninguna plantilla ZapSign.
+      */
+      if (answers.credit_history === "current_arrears") {
+        await finishQualification();
+        return;
+      }
 
-      finishQualification();
-
+      renderApplicantData();
 
       return;
 
+    }
+
+
+    /* =====================================================
+       DATOS COMPLETOS DEL SOLICITANTE
+    ===================================================== */
+
+    if (flow === "applicant-data") {
+      captureApplicantData();
+      await finishQualification();
+      return;
     }
 
 
@@ -5312,7 +5475,17 @@ if (flow === "codeudor") {
     }
 
 
-/* ---------------------------------------------------
+    /* ---------------------------------------------------
+       DATOS COMPLETOS DEL SOLICITANTE
+    --------------------------------------------------- */
+
+    if (flow === "applicant-data") {
+      renderQualification();
+      return;
+    }
+
+
+    /* ---------------------------------------------------
    RESULTADO FINAL
 --------------------------------------------------- */
 
@@ -5321,13 +5494,10 @@ if (
   "final-result"
 ) {
 
-  /*
-    La solicitud ya fue guardada en Supabase
-    y procesada por la Edge Function.
-
-    No permitimos regresar a modificar las
-    respuestas originales de esta solicitud.
-  */
+  if (qualificationResult?.status === "red") {
+    resetFlow();
+    return;
+  }
 
   return;
 
@@ -5409,6 +5579,26 @@ if (
 
     answers =
       {};
+
+
+    applicantData = {
+      nombreCompleto: "", tipoDocumento: "", numeroDocumento: "",
+      fechaExpedicion: "", genero: "", fechaNacimiento: "",
+      lugarNacimiento: "", nacionalidad: "", estadoCivil: "",
+      celular: "", correo: "", direccion: "", tipoVivienda: "",
+      ciudad: "", departamento: "", personasCargo: "", nivelEstudios: "",
+      ocupacion: "", tipoContrato: "", empresa: "", nitEmpresa: "",
+      actividadEmpresa: "", ciudadEmpresa: "", telefonoEmpresa: "", cargo: "",
+      tiempoActividad: "", salario: "", otrosIngresos: "",
+      descripcionOtrosIngresos: "", gastosFinancieros: "", gastosPersonales: "",
+      totalActivos: "", totalPasivos: "", declaraRenta: "",
+      operacionesMonedaExtranjera: "", poseeBienRaiz: "", tipoBienRaiz: "",
+      ciudadBien: "", valorBien: "", poseeVehiculo: "", tipoServicio: "",
+      tipoVehiculoActual: "", placa: "", modelo: "", valorComercial: "",
+      referenciaPersonal: "", telefonoReferenciaPersonal: "",
+      referenciaComercial: "", nitReferenciaComercial: "",
+      telefonoReferenciaComercial: ""
+    };
 
 
     participantEmail =
