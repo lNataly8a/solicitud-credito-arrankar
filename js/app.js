@@ -457,10 +457,18 @@ politica_privacidad_fecha:
         new Date().toISOString(),
 
       vehicle:
-        simulation.vehicleType,
+        simulation.vehicleType === "car"
+          ? "Automóvil"
+          : simulation.vehicleType === "motorcycle"
+            ? "Moto"
+            : simulation.vehicleType,
 
       condition:
-        simulation.vehicleCondition,
+        simulation.vehicleCondition === "new"
+          ? "Nuevo"
+          : simulation.vehicleCondition === "used"
+            ? "Usado"
+            : simulation.vehicleCondition,
 
       vehicleYear:
         simulation.vehicleYear,
@@ -478,7 +486,11 @@ politica_privacidad_fecha:
         answers.monthly_income || 0,
 
       history:
-        answers.credit_history || "",
+        ({
+          current_arrears: "Reporte negativo activo",
+          paid_report: "Reporte pagado / paz y salvo",
+          none: "Sin reportes / primer crédito"
+        }[answers.credit_history] || answers.credit_history || ""),
 
       result:
         qualificationResult?.status || "",
@@ -487,13 +499,22 @@ politica_privacidad_fecha:
         qualificationResult?.template || "",
 
       empleo:
-        answers.employment || "",
+        ({
+          employee: "Empleado",
+          independent: "Independiente",
+          pensioner: "Pensionado",
+          rentier: "Rentista",
+          farmer: "Agricultor",
+          transporter: "Transportador",
+          partner: "Socio",
+          student_household: "Estudiante / hogar"
+        }[answers.employment] || answers.employment || ""),
 
       antiguedad_meses:
         answers.activity_months || 0,
 
       antiguedad_rango:
-        answers.activity_months_range || "",
+        answers.activity_months_label || answers.activity_months_range || "",
 
         politica_privacidad_aceptada:
   privacyAccepted,
@@ -3767,14 +3788,28 @@ else if (
       title: "Datos personales",
       fields: [
         ["nombreCompleto", "Nombre completo", "text"],
-        ["tipoDocumento", "Tipo documento", "text"],
+        ["tipoDocumento", "Tipo documento", "select", [
+          ["Cédula de ciudadanía", "Cédula de ciudadanía"],
+          ["Pasaporte", "Pasaporte"],
+          ["Cédula de extranjería", "Cédula de extranjería"],
+          ["Permiso por Protección Temporal", "Permiso por Protección Temporal"]
+        ]],
         ["numeroDocumento", "Número documento", "number"],
         ["fechaExpedicion", "Fecha expedición", "date"],
-        ["genero", "Género", "text"],
+        ["genero", "Género", "select", [
+          ["Masculino", "Masculino"],
+          ["Femenino", "Femenino"]
+        ]],
         ["fechaNacimiento", "Fecha nacimiento", "date"],
         ["lugarNacimiento", "Lugar nacimiento", "text"],
         ["nacionalidad", "Nacionalidad", "text"],
-        ["estadoCivil", "Estado civil", "text"],
+        ["estadoCivil", "Estado civil", "select", [
+          ["Soltero(a)", "Soltero(a)"],
+          ["Casado(a)", "Casado(a)"],
+          ["Divorciado(a)", "Divorciado(a)"],
+          ["Unión libre", "Unión libre"],
+          ["Viudo(a)", "Viudo(a)"]
+        ]],
         ["celular", "Celular", "tel"],
         ["correo", "Correo", "email"],
         ["direccion", "Dirección", "text"],
@@ -3782,14 +3817,32 @@ else if (
         ["ciudad", "Ciudad", "text"],
         ["departamento", "Departamento", "text"],
         ["personasCargo", "Personas a cargo", "number"],
-        ["nivelEstudios", "Nivel de estudios", "text"]
+        ["nivelEstudios", "Nivel de estudios", "select", [
+          ["Primaria", "Primaria"],
+          ["Secundaria", "Secundaria"],
+          ["Técnico", "Técnico"],
+          ["Tecnólogo", "Tecnólogo"],
+          ["Universitario", "Universitario"],
+          ["Maestría", "Maestría"],
+          ["Doctorado", "Doctorado"],
+          ["Ninguno", "Ninguno"]
+        ]]
       ]
     },
     {
       title: "Información laboral",
       fields: [
         ["ocupacion", "Ocupación", "text"],
-        ["tipoContrato", "Tipo contrato", "text"],
+        ["tipoContrato", "Tipo contrato", "select", [
+          ["Indefinido", "Indefinido"],
+          ["Carrera Administrativa", "Carrera Administrativa"],
+          ["Fijo", "Fijo"],
+          ["Provisional", "Provisional"],
+          ["Libre Nombramiento", "Libre Nombramiento"],
+          ["Obra o Labor", "Obra o Labor"],
+          ["Prestación de Servicios", "Prestación de Servicios"],
+          ["Soy el dueño", "Soy el dueño"]
+        ]],
         ["empresa", "Empresa", "text"],
         ["nitEmpresa", "NIT empresa", "number"],
         ["actividadEmpresa", "Actividad empresa", "text"],
@@ -3814,15 +3867,31 @@ else if (
       fields: [
         ["totalActivos", "Total activos", "currency"],
         ["totalPasivos", "Total pasivos", "currency"],
-        ["declaraRenta", "Declara renta", "text"],
-        ["operacionesMonedaExtranjera", "Operaciones moneda extranjera", "text"]
+        ["declaraRenta", "Declara renta", "select", [
+          ["Sí", "Sí"],
+          ["No", "No"]
+        ]],
+        ["operacionesMonedaExtranjera", "Operaciones moneda extranjera", "select", [
+          ["Sí", "Sí"],
+          ["No", "No"]
+        ]]
       ]
     },
     {
       title: "Bien raíz",
       fields: [
-        ["poseeBienRaiz", "Posee bien raíz", "text"],
-        ["tipoBienRaiz", "Tipo bien raíz", "text"],
+        ["poseeBienRaiz", "Posee bien raíz", "select", [
+          ["Sí", "Sí"],
+          ["No", "No"]
+        ]],
+        ["tipoBienRaiz", "Tipo bien raíz", "select", [
+          ["Ninguno", "Ninguno"],
+          ["Casa", "Casa"],
+          ["Apartamento", "Apartamento"],
+          ["Bodega", "Bodega"],
+          ["Local", "Local"],
+          ["Lote", "Lote"]
+        ]],
         ["ciudadBien", "Ciudad bien", "text"],
         ["valorBien", "Valor bien", "currency"]
       ]
@@ -3830,8 +3899,15 @@ else if (
     {
       title: "Vehículos actuales",
       fields: [
-        ["poseeVehiculo", "Posee vehículo", "text"],
-        ["tipoServicio", "Tipo servicio", "text"],
+        ["poseeVehiculo", "Posee vehículo", "select", [
+          ["Sí", "Sí"],
+          ["No", "No"]
+        ]],
+        ["tipoServicio", "Tipo servicio", "select", [
+          ["Público", "Público"],
+          ["Particular", "Particular"],
+          ["No tengo vehículos", "No tengo vehículos"]
+        ]],
         ["tipoVehiculoActual", "Tipo vehículo", "text"],
         ["placa", "Placa", "text"],
         ["modelo", "Modelo", "number"],
@@ -3850,13 +3926,68 @@ else if (
     }
   ];
 
-  function applicantFieldHtml(id, label, type) {
+  const REQUIRED_APPLICANT_FIELDS = new Set([
+    "nombreCompleto",
+    "tipoDocumento",
+    "numeroDocumento",
+    "fechaExpedicion",
+    "genero",
+    "fechaNacimiento",
+    "lugarNacimiento",
+    "nacionalidad",
+    "estadoCivil",
+    "celular",
+    "correo",
+    "direccion",
+    "ciudad",
+    "departamento",
+    "nivelEstudios",
+    "ocupacion",
+    "tiempoActividad",
+    "salario",
+    "declaraRenta",
+    "operacionesMonedaExtranjera",
+    "poseeBienRaiz",
+    "poseeVehiculo"
+  ]);
+
+  function isApplicantFieldRequired(id) {
+    if (REQUIRED_APPLICANT_FIELDS.has(id)) {
+      return true;
+    }
+
+    if (applicantData.poseeBienRaiz === "Sí") {
+      return ["tipoBienRaiz", "ciudadBien", "valorBien"].includes(id);
+    }
+
+    return false;
+  }
+
+  function applicantFieldHtml(id, label, type, options = []) {
     const value = applicantData[id] ?? "";
     const safeValue = String(value)
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
+    const required = isApplicantFieldRequired(id);
+    const requiredMark = required ? " <span aria-hidden=\"true\">*</span>" : "";
+
+    if (type === "select") {
+      return `
+        <div class="field">
+          <label for="applicant_${id}">${label}${requiredMark}</label>
+          <select id="applicant_${id}" autocomplete="off">
+            <option value="">Selecciona una opción</option>
+            ${options.map(([optionValue, optionLabel]) => `
+              <option value="${String(optionValue).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")}" ${String(value) === String(optionValue) ? "selected" : ""}>
+                ${optionLabel}
+              </option>
+            `).join("")}
+          </select>
+        </div>
+      `;
+    }
 
     if (type === "currency") {
       const formatted = safeValue && parseCOP(value)
@@ -3865,7 +3996,7 @@ else if (
 
       return `
         <div class="field">
-          <label for="applicant_${id}">${label}</label>
+          <label for="applicant_${id}">${label}${requiredMark}</label>
           <div class="currency-input">
             <span class="currency-symbol">$</span>
             <input id="applicant_${id}" type="text" inputmode="numeric" autocomplete="off" value="${formatted}">
@@ -3876,7 +4007,7 @@ else if (
 
     return `
       <div class="field">
-        <label for="applicant_${id}">${label}</label>
+        <label for="applicant_${id}">${label}${requiredMark}</label>
         <input id="applicant_${id}" type="${type}" autocomplete="off" value="${safeValue}">
       </div>
     `;
@@ -3886,6 +4017,31 @@ else if (
     flow = "applicant-data";
     setInfoVisibility(false);
     updateProgress(4);
+
+    const employmentLabels = {
+      employee: "Empleado",
+      independent: "Independiente",
+      pensioner: "Pensionado",
+      rentier: "Rentista",
+      farmer: "Agricultor",
+      transporter: "Transportador",
+      partner: "Socio",
+      student_household: "Estudiante / hogar"
+    };
+
+    applicantData.correo = participantEmail || applicantData.correo;
+    applicantData.ocupacion =
+      applicantData.ocupacion ||
+      employmentLabels[answers.employment] ||
+      "";
+    applicantData.tiempoActividad =
+      applicantData.tiempoActividad ||
+      answers.activity_months_label ||
+      "";
+    applicantData.salario =
+      applicantData.salario ||
+      answers.monthly_income ||
+      "";
 
     screen.innerHTML = `
       <div class="question applicant-form">
@@ -3898,7 +4054,7 @@ else if (
         ${APPLICANT_FORM_SECTIONS.map(section => `
           <div class="applicant-section">
             <h3>${section.title}</h3>
-            ${section.fields.map(([id, label, type]) => applicantFieldHtml(id, label, type)).join("")}
+            ${section.fields.map(field => applicantFieldHtml(field[0], field[1], field[2], field[3] || [])).join("")}
           </div>
         `).join("")}
       </div>
@@ -3909,7 +4065,9 @@ else if (
         const input = document.getElementById(`applicant_${id}`);
         if (!input) return;
 
-        input.addEventListener("input", () => {
+        const inputEvent = type === "select" ? "change" : "input";
+
+        input.addEventListener(inputEvent, () => {
           if (type === "currency") {
             const digits = input.value.replace(/\D/g, "");
             const numericValue = Number(digits) || 0;
@@ -3952,6 +4110,32 @@ else if (
 
     if (!applicantData.correo) {
       applicantData.correo = participantEmail;
+    }
+
+    return true;
+  }
+
+  function validateApplicantData() {
+    captureApplicantData();
+
+    const requiredLabels = {};
+    APPLICANT_FORM_SECTIONS.forEach(section => {
+      section.fields.forEach(([id, label]) => {
+        if (isApplicantFieldRequired(id)) {
+          requiredLabels[id] = label;
+        }
+      });
+    });
+
+    for (const [id, label] of Object.entries(requiredLabels)) {
+      const value = applicantData[id];
+      const empty = value === null || value === undefined || String(value).trim() === "" || (typeof value === "number" && value <= 0);
+
+      if (empty) {
+        showValidation(`Completa el campo obligatorio: ${label}.`);
+        document.getElementById(`applicant_${id}`)?.focus();
+        return false;
+      }
     }
 
     return true;
@@ -5257,11 +5441,13 @@ privacyAcceptedAt = new Date().toISOString();
     ===================================================== */
 
     if (flow === "applicant-data") {
-      captureApplicantData();
-      await finishQualification();
-      return;
-    }
+  if (!validateApplicantData()) {
+    return;
+  }
 
+  await finishQualification();
+  return;
+}
 
     /* =====================================================
        RESULTADO FINAL

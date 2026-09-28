@@ -2167,6 +2167,305 @@ select#qualificationInput option {
   appearance: auto;
 }
 
+/* =========================================================
+   LISTAS DESPLEGABLES
+   Estilo Arrankar para los nuevos campos select
+========================================================= */
+
+.field select {
+  width: 100%;
+  min-height: 52px;
+
+  padding: 0 48px 0 17px;
+
+  border: 1px solid #dbe6ef;
+  border-radius: 10px;
+
+  background-color: #ffffff;
+
+  color: var(--text);
+
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 400;
+
+  outline: none;
+
+  cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      var(--blue) 50%
+    ),
+    linear-gradient(
+      135deg,
+      var(--blue) 50%,
+      transparent 50%
+    );
+
+  background-position:
+    calc(100% - 20px) 22px,
+    calc(100% - 14px) 22px;
+
+  background-size:
+    6px 6px,
+    6px 6px;
+
+  background-repeat: no-repeat;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+
+/* Texto de la opción inicial */
+
+.field select:invalid {
+  color: #a2afbe;
+}
+
+
+/* Hover */
+
+.field select:hover {
+  border-color: #9edee8;
+  background-color: #fbfeff;
+}
+
+
+/* Focus */
+
+.field select:focus {
+  border-color: var(--cyan);
+
+  box-shadow:
+    0 0 0 4px rgba(8, 199, 221, 0.09);
+}
+
+
+/* Opciones del menú */
+
+.field select option {
+  color: var(--text);
+
+  background-color: #ffffff;
+
+  font-family: inherit;
+  font-size: 16px;
+}
+
+
+/* Opción inicial */
+
+.field select option[value=""] {
+  color: #a2afbe;
+}
+
+
+/* =========================================================
+   SELECTS DE VEHÍCULO Y CODEUDOR
+   Mantener el mismo lenguaje visual
+========================================================= */
+
+#vehicleYear,
+#codeudorRelationship,
+#codeudorDocumentType,
+#codeudorEmployment {
+  width: 100%;
+  min-height: 52px;
+
+  box-sizing: border-box;
+
+  padding: 0 48px 0 17px;
+
+  border: 1px solid #dbe6ef;
+  border-radius: 10px;
+
+  background-color: #ffffff;
+
+  color: var(--text);
+
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 400;
+
+  outline: none;
+
+  cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      var(--blue) 50%
+    ),
+    linear-gradient(
+      135deg,
+      var(--blue) 50%,
+      transparent 50%
+    );
+
+  background-position:
+    calc(100% - 20px) 22px,
+    calc(100% - 14px) 22px;
+
+  background-size:
+    6px 6px,
+    6px 6px;
+
+  background-repeat: no-repeat;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+
+#vehicleYear:hover,
+#codeudorRelationship:hover,
+#codeudorDocumentType:hover,
+#codeudorEmployment:hover {
+  border-color: #9edee8;
+  background-color: #fbfeff;
+}
+
+
+#vehicleYear:focus,
+#codeudorRelationship:focus,
+#codeudorDocumentType:focus,
+#codeudorEmployment:focus {
+  border-color: var(--cyan);
+
+  box-shadow:
+    0 0 0 4px rgba(8, 199, 221, 0.09);
+}
+
+
+#vehicleYear option,
+#codeudorRelationship option,
+#codeudorDocumentType option,
+#codeudorEmployment option {
+  color: var(--text);
+
+  background-color: #ffffff;
+
+  font-family: inherit;
+  font-size: 16px;
+}
+
+
+/* =========================================================
+   SELECTS DEL FORMULARIO DE DATOS DEL SOLICITANTE
+========================================================= */
+
+.applicant-form .field select {
+  width: 100%;
+  min-height: 52px;
+
+  padding: 0 48px 0 17px;
+
+  border: 1px solid #dbe6ef;
+  border-radius: 10px;
+
+  background-color: #ffffff;
+
+  color: var(--text);
+
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 400;
+
+  outline: none;
+
+  cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      var(--blue) 50%
+    ),
+    linear-gradient(
+      135deg,
+      var(--blue) 50%,
+      transparent 50%
+    );
+
+  background-position:
+    calc(100% - 20px) 22px,
+    calc(100% - 14px) 22px;
+
+  background-size:
+    6px 6px,
+    6px 6px;
+
+  background-repeat: no-repeat;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+
+.applicant-form .field select:hover {
+  border-color: #9edee8;
+  background-color: #fbfeff;
+}
+
+
+.applicant-form .field select:focus {
+  border-color: var(--cyan);
+
+  box-shadow:
+    0 0 0 4px rgba(8, 199, 221, 0.09);
+}
+
+
+.applicant-form .field select option {
+  color: var(--text);
+  background-color: #ffffff;
+
+  font-family: inherit;
+  font-size: 16px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .field select,
+  .applicant-form .field select,
+  #vehicleYear,
+  #codeudorRelationship,
+  #codeudorDocumentType,
+  #codeudorEmployment {
+    min-height: 50px;
+    padding-left: 15px;
+    padding-right: 44px;
+  }
+
+}
 
 /* =======================================================
    FOCUS
