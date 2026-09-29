@@ -2740,12 +2740,12 @@ function bindCurrencyInput(inputId) {
   }
 
   function showInsufficientIncomeModal() {
-    showFinancialModal({
-      title: "Necesitamos revisar tus ingresos",
-      message: "Los ingresos mensuales registrados no son suficientes para continuar con esta solicitud. Verifica que la información ingresada sea correcta. Si estos son tus ingresos reales, puedes solicitar a otra persona con ingresos suficientes que realice la solicitud.",
-      buttonText: "Entendido"
-    });
-  }
+  showFinancialModal({
+    title: "Necesitamos revisar tus ingresos",
+    message: "Para continuar con la solicitud, los ingresos mensuales registrados deben ser de al menos $2.626.357,50. En este momento, los ingresos que registraste están por debajo de ese valor. Verifica que la información ingresada sea correcta. Si estos son tus ingresos reales, puedes solicitarle a un familiar que cumpla con las condiciones de ingresos e historial crediticio que realice la solicitud.",
+    buttonText: "Entendido"
+  });
+}
 
   function showPaymentCapacityModal(recommendedTerm) {
     const message = recommendedTerm
@@ -6143,9 +6143,120 @@ function closePrivacyPolicy() {
 
 
   /* =======================================================
+     REGRESO DESDE ZAPSIGN DESPUÉS DE LA FIRMA
+  ======================================================= */
+
+  function renderSignedThankYou(status) {
+
+    flow =
+      "signed-thank-you";
+
+    setInfoVisibility(false);
+
+    updateProgress(5, 5);
+
+    backBtn.hidden = true;
+    nextBtn.hidden = true;
+
+    const isYellow =
+      status === "yellow";
+
+    const title = isYellow
+      ? "¡Gracias por completar tu solicitud!"
+      : "¡Gracias por completar tu solicitud!";
+
+    const subtitle = isYellow
+      ? "Tu firma fue recibida correctamente."
+      : "Tu firma fue recibida correctamente.";
+
+    const message = isYellow
+      ? "Tu parte del proceso ya está lista. Ahora queda pendiente la firma del segundo firmante para continuar con la solicitud."
+      : "Tu solicitud y tu firma fueron recibidas correctamente. El proceso continuará con la revisión correspondiente.";
+
+    screen.innerHTML = `
+      <div class="final-result signed-thank-you">
+
+        <div class="final-thanks">
+          <h2>${title}</h2>
+          <p>${subtitle}</p>
+        </div>
+
+        <span class="eyebrow">PROCESO COMPLETADO</span>
+
+        <h2>${
+          isYellow
+            ? "Tu solicitud sigue en proceso"
+            : "Tu solicitud fue enviada correctamente"
+        }</h2>
+
+        <div class="result ${isYellow ? "yellow" : "green"}">
+          <p>${message}</p>
+        </div>
+
+        <div class="result-followup">
+          <p>
+            Gracias por confiar en Arrankar.
+          </p>
+        </div>
+
+      </div>
+    `;
+
+    // Evita que al recargar se vuelva a mostrar la pantalla de firma completada.
+    try {
+      const cleanUrl =
+        window.location.origin +
+        window.location.pathname;
+
+      window.history.replaceState(
+        {},
+        document.title,
+        cleanUrl
+      );
+    } catch (error) {
+      console.warn(
+        "No fue posible limpiar los parámetros de retorno de ZapSign:",
+        error
+      );
+    }
+  }
+
+
+  function handleZapSignReturn() {
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+    const firma =
+      params.get("firma");
+
+    const resultado =
+      params.get("resultado");
+
+    if (
+      firma !== "finalizada" ||
+      (resultado !== "green" &&
+        resultado !== "yellow")
+    ) {
+      return false;
+    }
+
+    renderSignedThankYou(
+      resultado
+    );
+
+    return true;
+  }
+
+
+  /* =======================================================
      INICIO
   ======================================================= */
 
-  renderWelcome();
+  if (!handleZapSignReturn()) {
+    renderWelcome();
+  }
 
 });
