@@ -10,6 +10,25 @@ document.addEventListener("DOMContentLoaded", () => {
   ======================================================= */
 
   const screen = document.getElementById("screen");
+
+  const financialModalStyles = document.createElement("style");
+  financialModalStyles.textContent = `
+    .financial-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:24px}
+    .financial-modal.is-open{display:flex}
+    .financial-modal__backdrop{position:absolute;inset:0;background:rgba(11,35,66,.58);backdrop-filter:blur(3px)}
+    .financial-modal__dialog{position:relative;width:min(100%,560px);box-sizing:border-box;padding:38px 34px 32px;border-radius:22px;background:#fff;box-shadow:0 24px 70px rgba(13,42,77,.28);text-align:center;animation:financialModalIn .22s ease-out}
+    .financial-modal__close{position:absolute;top:12px;right:16px;width:38px;height:38px;border:0;background:transparent;color:#6c7d92;font-size:30px;line-height:1;cursor:pointer}
+    .financial-modal__icon{display:flex;align-items:center;justify-content:center;width:58px;height:58px;margin:0 auto 20px;border-radius:50%;background:#eaf2fb;color:#173f73;font-size:30px;font-weight:800}
+    .financial-modal__dialog h2{margin:0 0 14px;color:#173f73;font-size:clamp(24px,4vw,31px);line-height:1.15}
+    .financial-modal__message{max-width:470px;margin:0 auto;color:#506277;font-size:17px;line-height:1.6}
+    .financial-modal__actions{display:flex;flex-direction:column;gap:10px;margin-top:28px}
+    .financial-modal__actions button{width:100%;min-height:50px;border-radius:10px;padding:12px 18px;font:inherit;font-weight:700;cursor:pointer}
+    .financial-modal__primary{border:1px solid #173f73;background:#173f73;color:#fff}
+    .financial-modal__secondary{border:1px solid #b7c7df;background:#fff;color:#173f73}
+    @keyframes financialModalIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+    @media(max-width:600px){.financial-modal{padding:16px}.financial-modal__dialog{padding:32px 22px 24px}.financial-modal__message{font-size:16px}}
+  `;
+  document.head.appendChild(financialModalStyles);
   const nextBtn = document.getElementById("nextBtn");
   const backBtn = document.getElementById("backBtn");
   const progressFill = document.getElementById("progressFill");
@@ -1278,7 +1297,11 @@ function updateButtons() {
       nextBtn.textContent =
         qualificationStep ===
         QUESTIONS.length - 1
-          ? "Ver resultado →"
+          ? (
+              answers.credit_history === "current_arrears"
+                ? "Ver resultado →"
+                : "Completar mis datos →"
+            )
           : "Continuar →";
 
       return;
@@ -2668,8 +2691,75 @@ function bindCurrencyInput(inputId) {
   }
 
   /* =======================================================
-     VALIDACIÓN VISUAL
+     MODALES Y VALIDACIÓN VISUAL
   ======================================================= */
+
+  function closeFinancialModal() {
+    const modal = document.getElementById("financialModal");
+    if (!modal) return;
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  function showFinancialModal({ title, message, buttonText = "Entendido", onConfirm = closeFinancialModal, secondaryText = "", onSecondary = null }) {
+    let modal = document.getElementById("financialModal");
+    if (!modal) {
+      modal = document.createElement("div");
+      modal.id = "financialModal";
+      modal.className = "financial-modal";
+      modal.setAttribute("aria-hidden", "true");
+      modal.innerHTML = `
+        <div class="financial-modal__backdrop" data-financial-modal-close></div>
+        <div class="financial-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="financialModalTitle">
+          <button type="button" class="financial-modal__close" aria-label="Cerrar" data-financial-modal-close>×</button>
+          <div class="financial-modal__icon">!</div>
+          <h2 id="financialModalTitle"></h2>
+          <p class="financial-modal__message"></p>
+          <div class="financial-modal__actions">
+            <button type="button" class="financial-modal__secondary" hidden></button>
+            <button type="button" class="financial-modal__primary"></button>
+          </div>
+        </div>`;
+      document.body.appendChild(modal);
+      modal.querySelectorAll("[data-financial-modal-close]").forEach(el => el.addEventListener("click", closeFinancialModal));
+    }
+    modal.querySelector("#financialModalTitle").textContent = title;
+    modal.querySelector(".financial-modal__message").textContent = message;
+    const primary = modal.querySelector(".financial-modal__primary");
+    const secondary = modal.querySelector(".financial-modal__secondary");
+    primary.textContent = buttonText;
+    primary.onclick = () => { closeFinancialModal(); onConfirm(); };
+    secondary.hidden = !secondaryText;
+    secondary.textContent = secondaryText;
+    secondary.onclick = () => { closeFinancialModal(); if (onSecondary) onSecondary(); };
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    window.setTimeout(() => primary.focus(), 50);
+  }
+
+  function showInsufficientIncomeModal() {
+    showFinancialModal({
+      title: "Necesitamos revisar tus ingresos",
+      message: "Los ingresos mensuales registrados no son suficientes para continuar con esta solicitud. Verifica que la información ingresada sea correcta. Si estos son tus ingresos reales, puedes solicitar a otra persona con ingresos suficientes que realice la solicitud.",
+      buttonText: "Entendido"
+    });
+  }
+
+  function showPaymentCapacityModal(recommendedTerm) {
+    const message = recommendedTerm
+      ? `La cuota estimada supera el 30% de tus ingresos mensuales. Puedes aumentar el plazo a ${recommendedTerm} meses para ajustarla a tu capacidad de pago.`
+      : "La cuota estimada supera el 30% de tus ingresos mensuales incluso con el plazo disponible. Puedes revisar la cuota inicial o el valor a financiar.";
+    showFinancialModal({
+      title: "Ajustemos el plazo de tu solicitud",
+      message,
+      buttonText: recommendedTerm ? "Cambiar plazo" : "Entendido",
+      onConfirm: recommendedTerm ? () => { simulationStep = getLastSimulationStep(); flow = "simulation"; renderSimulation(); } : closeFinancialModal,
+      secondaryText: recommendedTerm ? "Entendido" : "",
+      onSecondary: closeFinancialModal
+    });
+  }
 
   function showValidation(
     message
@@ -3813,7 +3903,11 @@ else if (
         ["celular", "Celular", "tel"],
         ["correo", "Correo", "email"],
         ["direccion", "Dirección", "text"],
-        ["tipoVivienda", "Tipo vivienda", "text"],
+        ["tipoVivienda", "Tipo vivienda", "select", [
+          ["Propia", "Propia"],
+          ["Arrendada", "Arrendada"],
+          ["Familiar", "Familiar"]
+        ]],
         ["ciudad", "Ciudad", "text"],
         ["departamento", "Departamento", "text"],
         ["personasCargo", "Personas a cargo", "number"],
@@ -3908,7 +4002,19 @@ else if (
           ["Particular", "Particular"],
           ["No tengo vehículos", "No tengo vehículos"]
         ]],
-        ["tipoVehiculoActual", "Tipo vehículo", "text"],
+        ["tipoVehiculoActual", "Tipo vehículo", "select", [
+          ["Automóvil", "Automóvil"],
+          ["Motocicleta", "Motocicleta"],
+          ["Campero o Camioneta", "Campero o Camioneta"],
+          ["Camión", "Camión"],
+          ["Tractocamion", "Tractocamion"],
+          ["Bus", "Bus"],
+          ["Buseta", "Buseta"],
+          ["Taxi", "Taxi"],
+          ["Colectivo", "Colectivo"],
+          ["Maquinaria amarilla", "Maquinaria amarilla"],
+          ["Maquinaria agricola", "Maquinaria agricola"]
+        ]],
         ["placa", "Placa", "text"],
         ["modelo", "Modelo", "number"],
         ["valorComercial", "Valor comercial", "currency"]
@@ -4115,6 +4221,40 @@ else if (
     return true;
   }
 
+  const MIN_TOTAL_MONTHLY_INCOME = 2626357.5;
+  const MAX_PAYMENT_INCOME_PERCENTAGE = 0.30;
+
+  function calculateMonthlyPaymentForTerm(term) {
+    const amount = Number(simulation.financedAmount) || 0;
+    const months = Number(term) || 0;
+    const rate = Number(MONTHLY_RATE_NMV) || 0;
+    if (!amount || !months) return 0;
+    if (!rate) return amount / months;
+    return amount * (rate * Math.pow(1 + rate, months)) / (Math.pow(1 + rate, months) - 1);
+  }
+
+  function getFinancialCapacityResult() {
+    const salary = parseCOP(applicantData.salario) || 0;
+    const otherIncome = parseCOP(applicantData.otrosIngresos) || 0;
+    const totalMonthlyIncome = salary + otherIncome;
+    if (totalMonthlyIncome < MIN_TOTAL_MONTHLY_INCOME) return { valid:false, type:"minimum-income", totalMonthlyIncome };
+    const currentTerm = Number(simulation.term) || 0;
+    const currentPayment = calculateMonthlyPaymentForTerm(currentTerm);
+    const maxAllowedPayment = totalMonthlyIncome * MAX_PAYMENT_INCOME_PERCENTAGE;
+    if (currentPayment <= maxAllowedPayment) return { valid:true, totalMonthlyIncome, currentPayment, maxAllowedPayment };
+    const availableTerms = getAvailableTermOptions().filter(term => Number(term) >= currentTerm);
+    const recommendedTerm = availableTerms.find(term => calculateMonthlyPaymentForTerm(term) <= maxAllowedPayment);
+    return { valid:false, type:"payment-capacity", totalMonthlyIncome, currentPayment, maxAllowedPayment, recommendedTerm: recommendedTerm || null };
+  }
+
+  function validateFinancialCapacity() {
+    const result = getFinancialCapacityResult();
+    if (result.valid) return true;
+    if (result.type === "minimum-income") { showInsufficientIncomeModal(); return false; }
+    if (result.type === "payment-capacity") { showPaymentCapacityModal(result.recommendedTerm); return false; }
+    return false;
+  }
+
   function validateApplicantData() {
     captureApplicantData();
 
@@ -4210,23 +4350,12 @@ else if (
         await response.json();
 
 
-      if (
-        !response.ok
-      ) {
-
-        console.error(
-          "Error procesando solicitud:",
-          result
-        );
-
-
-        alert(
-          "No fue posible procesar la solicitud."
-        );
-
-
+      if (!response.ok) {
+        console.error("Error procesando solicitud:", result);
+        if (result.code === "MINIMUM_TOTAL_INCOME_NOT_MET") { showInsufficientIncomeModal(); return; }
+        if (result.code === "PAYMENT_CAPACITY_NOT_MET") { showPaymentCapacityModal(result.recommended_term || null); return; }
+        alert("No fue posible procesar la solicitud.");
         return;
-
       }
 
 
@@ -5353,17 +5482,14 @@ privacyAcceptedAt = new Date().toISOString();
       );
 
 
-      qualificationStep =
-        0;
+      if (Object.keys(answers || {}).length > 0) {
+        renderApplicantData();
+        return;
+      }
 
-
-      answers =
-        {};
-
-
+      qualificationStep = 0;
+      answers = {};
       renderQualification();
-
-
       return;
 
     }
@@ -5441,13 +5567,17 @@ privacyAcceptedAt = new Date().toISOString();
     ===================================================== */
 
     if (flow === "applicant-data") {
-  if (!validateApplicantData()) {
-    return;
-  }
+      if (!validateApplicantData()) {
+        return;
+      }
 
-  await finishQualification();
-  return;
-}
+      if (!validateFinancialCapacity()) {
+        return;
+      }
+
+      await finishQualification();
+      return;
+    }
 
     /* =====================================================
        RESULTADO FINAL
@@ -5612,20 +5742,14 @@ if (flow === "codeudor") {
        RESULTADO SIMULACIÓN
     --------------------------------------------------- */
 
-    if (
-      flow ===
-      "simulation-result"
-    ) {
-
-      simulationStep =
-        5;
-
-
+    if (flow === "simulation-result") {
+      if (Object.keys(answers || {}).length > 0) {
+        renderApplicantData();
+        return;
+      }
+      simulationStep = 5;
       renderSimulation();
-
-
       return;
-
     }
 
 

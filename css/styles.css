@@ -2447,6 +2447,58 @@ select#qualificationInput option {
   font-size: 16px;
 }
 
+/* =======================================================
+   LISTAS DESPLEGABLES — DATOS DEL SOLICITANTE
+======================================================= */
+
+.applicant-form .field select,
+#vehicleYear,
+#codeudorRelationship,
+#codeudorDocumentType,
+#codeudorEmployment {
+  width: 100%;
+  max-width: 420px;
+  min-height: 52px;
+  box-sizing: border-box;
+  padding: 0 48px 0 16px;
+  border: 1.5px solid #b7c7df;
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #173f73;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #173f73 50%), linear-gradient(135deg, #173f73 50%, transparent 50%);
+  background-position: calc(100% - 20px) 22px, calc(100% - 14px) 22px;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+
+.applicant-form .field select:focus,
+#vehicleYear:focus,
+#codeudorRelationship:focus,
+#codeudorDocumentType:focus,
+#codeudorEmployment:focus {
+  border-color: #2f75c9;
+  box-shadow: 0 0 0 3px rgba(47, 117, 201, 0.12);
+}
+
+@media (max-width: 600px) {
+  .applicant-form .field select,
+  #vehicleYear,
+  #codeudorRelationship,
+  #codeudorDocumentType,
+  #codeudorEmployment {
+    max-width: 100%;
+  }
+}
+
 
 /* =========================================================
    RESPONSIVE
