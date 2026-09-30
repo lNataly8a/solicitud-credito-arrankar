@@ -6219,7 +6219,6 @@ function closePrivacyPolicy() {
     if (whatsappButton) {
       whatsappButton.addEventListener("click", () => {
         const whatsappNumber =
-          searchParams.get("whatsapp") ||
           "573124585172";
 
         const whatsappMessage =

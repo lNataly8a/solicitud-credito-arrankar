@@ -2499,6 +2499,59 @@ select#qualificationInput option {
   }
 }
 
+/* ============================================================
+   BOTÓN FINAL — CONTINUAR POR WHATSAPP
+   ============================================================ */
+
+.whatsapp-completion-button {
+  width: 100%;
+  max-width: 420px;
+  margin: 18px auto 0;
+  display: block;
+
+  padding: 14px 24px;
+  border: none;
+  border-radius: 10px;
+
+  background: #25d366;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.20);
+}
+
+.whatsapp-completion-button:hover {
+  background: #20bd5a;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(37, 211, 102, 0.25);
+}
+
+.whatsapp-completion-button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px rgba(37, 211, 102, 0.20);
+}
+
+.whatsapp-completion-button:focus-visible {
+  outline: 3px solid rgba(37, 211, 102, 0.30);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .whatsapp-completion-button {
+    max-width: 100%;
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+}
 
 /* =========================================================
    RESPONSIVE
