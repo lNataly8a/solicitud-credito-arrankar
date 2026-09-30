@@ -6195,8 +6195,12 @@ function closePrivacyPolicy() {
 
         <div class="result-followup">
           <p>
+            En las próximas 24 a 48 horas ya tendras respuesta a tu solicitud!
+          </p>
+          <p>
             Gracias por confiar en Arrankar.
           </p>
+          
         </div>
 
       </div>
