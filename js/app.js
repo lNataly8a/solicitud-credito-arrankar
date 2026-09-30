@@ -2740,11 +2740,11 @@ function bindCurrencyInput(inputId) {
   }
 
   function showInsufficientIncomeModal() {
-  showFinancialModal({
-    title: "Necesitamos revisar tus ingresos",
-    message: "Para continuar con la solicitud, los ingresos mensuales registrados deben ser de al menos $2.626.357,50. En este momento, los ingresos que registraste están por debajo de ese valor. Verifica que la información ingresada sea correcta. Si estos son tus ingresos reales, puedes solicitarle a un familiar que cumpla con las condiciones de ingresos e historial crediticio que realice la solicitud.",
-    buttonText: "Entendido"
-   });
+    showFinancialModal({
+      title: "Necesitamos revisar tus ingresos",
+      message: "Para continuar con la solicitud, los ingresos mensuales registrados deben ser de al menos $2.626.357,50. En este momento, los ingresos que registraste están por debajo de ese valor. Verifica que la información ingresada sea correcta. Si estos son tus ingresos reales, puedes solicitarle a un familiar que cumpla con las condiciones de ingresos e historial crediticio que realice la solicitud.",
+      buttonText: "Entendido"
+    });
   }
 
   function showPaymentCapacityModal(recommendedTerm) {
@@ -6200,11 +6200,37 @@ function closePrivacyPolicy() {
           <p>
             Gracias por confiar en Arrankar.
           </p>
-          
+
+          <button
+            type="button"
+            class="whatsapp-completion-button"
+            id="whatsappCompletionButton"
+          >
+            Continuar por WhatsApp
+          </button>
         </div>
 
       </div>
     `;
+
+    const whatsappButton =
+      document.getElementById("whatsappCompletionButton");
+
+    if (whatsappButton) {
+      whatsappButton.addEventListener("click", () => {
+        const whatsappNumber =
+          searchParams.get("whatsapp") ||
+          "573124585172";
+
+        const whatsappMessage =
+          "Acabo de diligenciar el formulario 📃✍🏼🔏 de solicitud de crédito en Arrankar. Quedo atento(a) a la revisión y a cualquier información adicional que necesiten. ¡Muchas gracias!";
+
+        const whatsappUrl =
+          `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+
+        window.location.href = whatsappUrl;
+      });
+    }
 
     // Evita que al recargar se vuelva a mostrar la pantalla de firma completada.
     try {
