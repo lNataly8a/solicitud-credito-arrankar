@@ -2744,8 +2744,8 @@ function bindCurrencyInput(inputId) {
     title: "Necesitamos revisar tus ingresos",
     message: "Para continuar con la solicitud, los ingresos mensuales registrados deben ser de al menos $2.626.357,50. En este momento, los ingresos que registraste están por debajo de ese valor. Verifica que la información ingresada sea correcta. Si estos son tus ingresos reales, puedes solicitarle a un familiar que cumpla con las condiciones de ingresos e historial crediticio que realice la solicitud.",
     buttonText: "Entendido"
-  });
-}
+   });
+  }
 
   function showPaymentCapacityModal(recommendedTerm) {
     const message = recommendedTerm
@@ -6224,16 +6224,33 @@ function closePrivacyPolicy() {
 
   function handleZapSignReturn() {
 
-    const params =
+    // ZapSign normalmente devuelve los parámetros por query string.
+    // También revisamos el hash como respaldo para evitar que una variante
+    // de navegación del navegador impida mostrar la pantalla final.
+    const searchParams =
       new URLSearchParams(
         window.location.search
       );
 
-    const firma =
-      params.get("firma");
+    let firma =
+      searchParams.get("firma");
 
-    const resultado =
-      params.get("resultado");
+    let resultado =
+      searchParams.get("resultado");
+
+    if (!firma && window.location.hash) {
+      const hashValue =
+        window.location.hash.replace(/^#/, "");
+
+      const hashParams =
+        new URLSearchParams(hashValue);
+
+      firma =
+        hashParams.get("firma");
+
+      resultado =
+        hashParams.get("resultado");
+    }
 
     if (
       firma !== "finalizada" ||
