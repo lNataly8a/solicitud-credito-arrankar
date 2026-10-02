@@ -128,6 +128,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let qualificationResult = null;
 
+  // Indica que el usuario eligió continuar sumando ingresos con un familiar.
+  // Se envía a la Edge Function para convertir este caso en YELLOW.
+  let familyIncomeFlowRequested = false;
+
   let privacyAccepted = false;
   let privacyAcceptedAt = "";
   const PRIVACY_POLICY_VERSION = "v1.0";
@@ -2756,16 +2760,33 @@ function bindCurrencyInput(inputId) {
   }
 
   function showPaymentCapacityModal(recommendedTerm) {
-    const message = recommendedTerm
-      ? `La cuota estimada supera el 30% de tus ingresos mensuales. Puedes aumentar el plazo a ${recommendedTerm} meses para ajustarla a tu capacidad de pago.`
-      : "La cuota estimada supera el 30% de tus ingresos mensuales incluso con el plazo disponible. Puedes revisar la cuota inicial o el valor a financiar.";
+    if (recommendedTerm) {
+      const message = `La cuota estimada supera el 30% de tus ingresos mensuales. Puedes aumentar el plazo a ${recommendedTerm} meses para ajustarla a tu capacidad de pago.`;
+      showFinancialModal({
+        title: "Ajustemos el plazo de tu solicitud",
+        message,
+        buttonText: "Cambiar plazo",
+        onConfirm: () => {
+          simulationStep = getLastSimulationStep();
+          flow = "simulation";
+          renderSimulation();
+        },
+        secondaryText: "Entendido",
+        onSecondary: closeFinancialModal
+      });
+      return;
+    }
+
     showFinancialModal({
-      title: "Ajustemos el plazo de tu solicitud",
-      message,
-      buttonText: recommendedTerm ? "Cambiar plazo" : "Entendido",
-      onConfirm: recommendedTerm ? () => { simulationStep = getLastSimulationStep(); flow = "simulation"; renderSimulation(); } : closeFinancialModal,
-      secondaryText: recommendedTerm ? "Entendido" : "",
-      onSecondary: closeFinancialModal
+      title: "Necesitamos revisar tu capacidad de pago",
+      message: "La cuota estimada supera el 30% de tus ingresos mensuales incluso con el plazo disponible. Verifica que los ingresos registrados sean correctos o puedes sumar los ingresos de un familiar para continuar con el proceso.",
+      buttonText: "Entendido",
+      onConfirm: closeFinancialModal,
+      secondaryText: "Sumar ingresos con un familiar",
+      onSecondary: () => {
+        familyIncomeFlowRequested = true;
+        finishQualification();
+      }
     });
   }
 
@@ -4379,7 +4400,8 @@ else if (
               JSON.stringify(
                 {
                   participant_id:
-                    participantId
+                    participantId,
+                  force_family_income: familyIncomeFlowRequested
                 }
               )
 
@@ -5958,6 +5980,8 @@ if (
 
     qualificationResult =
       null;
+
+    familyIncomeFlowRequested = false;
 
 
     codeudor = {
