@@ -2747,6 +2747,14 @@ function bindCurrencyInput(inputId) {
     });
   }
 
+  function showInitialIncomeWarningModal() {
+    showFinancialModal({
+      title: "Revisa tus ingresos",
+      message: "Para continuar con el proceso, tus ingresos mensuales deben ser de al menos $2.626.357,50. Si tus ingresos son inferiores a este valor, no es necesario que completes el formulario adicional.",
+      buttonText: "Entendido"
+    });
+  }
+
   function showPaymentCapacityModal(recommendedTerm) {
     const message = recommendedTerm
       ? `La cuota estimada supera el 30% de tus ingresos mensuales. Puedes aumentar el plazo a ${recommendedTerm} meses para ajustarla a tu capacidad de pago.`
@@ -3473,6 +3481,9 @@ else if (
   }
 
 
+  const MIN_TOTAL_MONTHLY_INCOME = 2626357.5;
+
+
   /* =======================================================
      VALIDACIÓN PRECALIFICACIÓN
   ======================================================= */
@@ -3653,6 +3664,25 @@ else if (
     answers[
       question.id
     ] = numericValue;
+
+
+    /* ---------------------------------------------------
+       INGRESO MÍNIMO ANTES DE ABRIR EL FORMULARIO
+       COMPLETO DEL SOLICITANTE
+    --------------------------------------------------- */
+
+    if (
+      question.id ===
+      "monthly_income" &&
+      numericValue <
+      MIN_TOTAL_MONTHLY_INCOME
+    ) {
+
+      showInitialIncomeWarningModal();
+
+      return false;
+
+    }
 
 
     return true;
@@ -4221,7 +4251,6 @@ else if (
     return true;
   }
 
-  const MIN_TOTAL_MONTHLY_INCOME = 2626357.5;
   const MAX_PAYMENT_INCOME_PERCENTAGE = 0.30;
 
   function calculateMonthlyPaymentForTerm(term) {
