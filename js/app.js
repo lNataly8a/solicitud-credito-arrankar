@@ -4196,6 +4196,18 @@ else if (
       </div>
     `;
 
+    // Al abrir el formulario largo, siempre comenzamos desde la parte superior.
+    // Esto evita que el navegador conserve la posición de scroll del paso anterior.
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "auto"
+      });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    });
+
     APPLICANT_FORM_SECTIONS.forEach(section => {
       section.fields.forEach(([id, , type]) => {
         const input = document.getElementById(`applicant_${id}`);
