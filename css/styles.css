@@ -2553,6 +2553,357 @@ select#qualificationInput option {
   }
 }
 
+/* ============================================================
+   MODAL COMPARTIR FORMULARIO
+   ============================================================ */
+
+.share-application-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(7, 22, 40, 0.58);
+
+  backdrop-filter: blur(4px);
+
+  animation:
+    shareModalFadeIn 0.2s ease forwards;
+}
+
+
+/* CONTENEDOR */
+
+.share-application-modal {
+  position: relative;
+
+  width: min(520px, 100%);
+
+  background: #ffffff;
+
+  border-radius: 22px;
+
+  padding: 32px;
+
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.25);
+
+  text-align: center;
+
+  animation:
+    shareModalScaleIn 0.22s ease forwards;
+}
+
+
+/* ICONO */
+
+.share-application-modal-icon {
+  width: 58px;
+  height: 58px;
+
+  margin: 0 auto 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #08bfd3;
+
+  color: #ffffff;
+
+  font-size: 28px;
+  font-weight: 700;
+
+  box-shadow:
+    0 8px 22px rgba(8, 191, 211, 0.28);
+}
+
+
+/* TITULO */
+
+.share-application-modal h2 {
+  margin: 0 35px 12px;
+
+  color: #092f66;
+
+  font-size: 24px;
+  font-weight: 700;
+
+  line-height: 1.25;
+}
+
+
+/* MENSAJE */
+
+.share-application-modal-message {
+  margin: 0 auto 20px;
+
+  max-width: 430px;
+
+  color: #536b87;
+
+  font-size: 15px;
+
+  line-height: 1.55;
+}
+
+
+/* TEXTAREA */
+
+.share-application-modal-text {
+  width: 100%;
+
+  min-height: 180px;
+
+  box-sizing: border-box;
+
+  resize: vertical;
+
+  padding: 14px 16px;
+
+  border: 1px solid #d9e2ec;
+
+  border-radius: 12px;
+
+  background: #f7fafc;
+
+  color: #34495e;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+
+  outline: none;
+
+  text-align: left;
+}
+
+.share-application-modal-text:focus {
+  border-color: #08bfd3;
+
+  box-shadow:
+    0 0 0 3px rgba(8, 191, 211, 0.12);
+}
+
+
+/* BOTONES */
+
+.share-application-modal-actions {
+  display: flex;
+
+  gap: 12px;
+
+  margin-top: 20px;
+}
+
+
+/* COPIAR */
+
+.share-application-copy-button {
+  flex: 1;
+
+  min-height: 48px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: #08bfd3;
+
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.share-application-copy-button:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 8px 20px rgba(8, 191, 211, 0.25);
+}
+
+.share-application-copy-button.copied {
+  background: #0b8f79;
+}
+
+
+/* ENTENDIDO */
+
+.share-application-close-button {
+  flex: 1;
+
+  min-height: 48px;
+
+  border: 1px solid #d7e0ea;
+
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  color: #092f66;
+
+  font-family: inherit;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.share-application-close-button:hover {
+  background: #f4f8fb;
+
+  border-color: #b9c9d8;
+}
+
+
+/* CERRAR X */
+
+.share-application-modal-close {
+  position: absolute;
+
+  top: 14px;
+  right: 16px;
+
+  width: 34px;
+  height: 34px;
+
+  border: none;
+
+  background: transparent;
+
+  color: #8091a5;
+
+  font-size: 28px;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  border-radius: 50%;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.share-application-modal-close:hover {
+  background: #f1f5f8;
+
+  color: #092f66;
+}
+
+
+/* ANIMACIONES */
+
+@keyframes shareModalFadeIn {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+
+}
+
+
+@keyframes shareModalScaleIn {
+
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+}
+
+
+.share-application-modal-overlay.closing {
+  opacity: 0;
+
+  transition:
+    opacity 0.18s ease;
+}
+
+.share-application-modal-overlay.closing
+.share-application-modal {
+  transform: scale(0.96);
+
+  transition:
+    transform 0.18s ease;
+}
+
+
+/* ============================================================
+   CELULAR
+   ============================================================ */
+
+@media (max-width: 600px) {
+
+  .share-application-modal-overlay {
+    align-items: flex-end;
+
+    padding: 12px;
+  }
+
+  .share-application-modal {
+    width: 100%;
+
+    padding: 28px 20px 20px;
+
+    border-radius: 22px;
+  }
+
+  .share-application-modal h2 {
+    font-size: 21px;
+
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  .share-application-modal-text {
+    min-height: 160px;
+
+    font-size: 13px;
+  }
+
+  .share-application-modal-actions {
+    flex-direction: column;
+  }
+
+}
+
 /* =========================================================
    RESPONSIVE
 ========================================================= */
