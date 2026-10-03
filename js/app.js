@@ -1146,13 +1146,9 @@ ${shareUrl}
 ¡Mil gracias por la ayuda! Me avisas apenas lo mires.`;
 
   /*
-    CELULAR:
-    Utilizamos el menú nativo de compartir solamente
-    cuando el dispositivo es móvil/táctil.
-
-    PC:
-    No utilizamos navigator.share porque en Windows
-    puede abrir el menú de compartir del sistema.
+    ============================================================
+    CELULAR
+    ============================================================
   */
 
   const isMobile =
@@ -1186,8 +1182,10 @@ ${shareUrl}
   }
 
   /*
-    PC:
-    Copiar directamente el mensaje completo.
+    ============================================================
+    PC
+    ============================================================
+    Intentamos copiar automáticamente el mensaje.
   */
 
   try {
@@ -1201,9 +1199,13 @@ ${shareUrl}
         shareText
       );
 
-      alert(
-        "El mensaje para compartir el formulario se copió al portapapeles. Puedes pegarlo directamente en WhatsApp Web, correo o cualquier otra aplicación."
-      );
+      showShareApplicationModal({
+        title: "Formulario listo para compartir",
+        message:
+          "El mensaje para compartir el formulario se copió correctamente al portapapeles.",
+        text: shareText,
+        copied: true
+      });
 
       return;
     }
@@ -1218,8 +1220,10 @@ ${shareUrl}
   }
 
   /*
-    Último recurso si el navegador no permite
-    acceder al portapapeles.
+    ============================================================
+    ÚLTIMO RECURSO
+    ============================================================
+    Intentamos utilizar el método tradicional de copia.
   */
 
   const textArea =
@@ -1234,6 +1238,12 @@ ${shareUrl}
   textArea.style.left =
     "-9999px";
 
+  textArea.style.top =
+    "0";
+
+  textArea.style.opacity =
+    "0";
+
   document.body.appendChild(
     textArea
   );
@@ -1241,15 +1251,12 @@ ${shareUrl}
   textArea.focus();
   textArea.select();
 
+  let copiedSuccessfully = false;
+
   try {
 
-    document.execCommand(
-      "copy"
-    );
-
-    alert(
-      "El mensaje para compartir el formulario se copió al portapapeles. Puedes pegarlo directamente en WhatsApp Web, correo o cualquier otra aplicación."
-    );
+    copiedSuccessfully =
+      document.execCommand("copy");
 
   } catch (error) {
 
@@ -1258,15 +1265,288 @@ ${shareUrl}
       error
     );
 
-    alert(
-      "No fue posible copiar automáticamente el mensaje. Copia el enlace de esta página y compártelo con tu familiar."
-    );
-
   }
 
   document.body.removeChild(
     textArea
   );
+
+  /*
+    ============================================================
+    MOSTRAR MODAL
+    ============================================================
+  */
+
+  if (copiedSuccessfully) {
+
+    showShareApplicationModal({
+      title: "Formulario listo para compartir",
+      message:
+        "El mensaje para compartir el formulario se copió correctamente al portapapeles.",
+      text: shareText,
+      copied: true
+    });
+
+  } else {
+
+    showShareApplicationModal({
+      title: "Comparte el formulario",
+      message:
+        "No fue posible copiar automáticamente el mensaje. Puedes seleccionarlo y copiarlo manualmente.",
+      text: shareText,
+      copied: false
+    });
+
+  }
+
+}
+
+
+/*
+  ============================================================
+  MODAL DE COMPARTIR
+  ============================================================
+*/
+
+function showShareApplicationModal({
+  title,
+  message,
+  text,
+  copied
+}) {
+
+  /*
+    Si ya existe un modal anterior,
+    lo eliminamos.
+  */
+
+  const existingModal =
+    document.getElementById(
+      "shareApplicationModal"
+    );
+
+  if (existingModal) {
+    existingModal.remove();
+  }
+
+  /*
+    Crear modal
+  */
+
+  const modal =
+    document.createElement("div");
+
+  modal.id =
+    "shareApplicationModal";
+
+  modal.className =
+    "share-application-modal-overlay";
+
+  modal.innerHTML = `
+    <div
+      class="share-application-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="shareApplicationModalTitle"
+    >
+
+      <button
+        type="button"
+        class="share-application-modal-close"
+        aria-label="Cerrar"
+      >
+        ×
+      </button>
+
+      <div class="share-application-modal-icon">
+        ${copied ? "✓" : "↗"}
+      </div>
+
+      <h2 id="shareApplicationModalTitle">
+        ${title}
+      </h2>
+
+      <p class="share-application-modal-message">
+        ${message}
+      </p>
+
+      <textarea
+        class="share-application-modal-text"
+        readonly
+      >${text}</textarea>
+
+      <div class="share-application-modal-actions">
+
+        <button
+          type="button"
+          class="share-application-copy-button"
+        >
+          ${copied ? "Copiar nuevamente" : "Copiar mensaje"}
+        </button>
+
+        <button
+          type="button"
+          class="share-application-close-button"
+        >
+          Entendido
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(
+    modal
+  );
+
+  const textArea =
+    modal.querySelector(
+      ".share-application-modal-text"
+    );
+
+  const closeModal = () => {
+
+    modal.classList.add(
+      "closing"
+    );
+
+    setTimeout(() => {
+
+      modal.remove();
+
+    }, 180);
+
+  };
+
+  /*
+    Cerrar con X
+  */
+
+  modal
+    .querySelector(
+      ".share-application-modal-close"
+    )
+    .addEventListener(
+      "click",
+      closeModal
+    );
+
+  /*
+    Botón Entendido
+  */
+
+  modal
+    .querySelector(
+      ".share-application-close-button"
+    )
+    .addEventListener(
+      "click",
+      closeModal
+    );
+
+  /*
+    Copiar nuevamente
+  */
+
+  modal
+    .querySelector(
+      ".share-application-copy-button"
+    )
+    .addEventListener(
+      "click",
+      async () => {
+
+        try {
+
+          await navigator.clipboard.writeText(
+            text
+          );
+
+          const button =
+            modal.querySelector(
+              ".share-application-copy-button"
+            );
+
+          button.textContent =
+            "✓ Mensaje copiado";
+
+          button.classList.add(
+            "copied"
+          );
+
+          setTimeout(() => {
+
+            button.textContent =
+              "Copiar nuevamente";
+
+            button.classList.remove(
+              "copied"
+            );
+
+          }, 2200);
+
+        } catch (error) {
+
+          /*
+            Si falla el clipboard,
+            seleccionamos el texto para
+            facilitar la copia manual.
+          */
+
+          textArea.focus();
+          textArea.select();
+
+        }
+
+      }
+    );
+
+  /*
+    Cerrar haciendo clic fuera
+    del contenido.
+  */
+
+  modal.addEventListener(
+    "click",
+    (event) => {
+
+      if (
+        event.target === modal
+      ) {
+        closeModal();
+      }
+
+    }
+  );
+
+  /*
+    ESC para cerrar
+  */
+
+  const handleEscape =
+    (event) => {
+
+      if (
+        event.key === "Escape"
+      ) {
+
+        closeModal();
+
+        document.removeEventListener(
+          "keydown",
+          handleEscape
+        );
+
+      }
+
+    };
+
+  document.addEventListener(
+    "keydown",
+    handleEscape
+  );
+
 }
 
 
