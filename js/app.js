@@ -1129,16 +1129,15 @@ politica_privacidad_fecha:
      COMPARTIR FORMULARIO
   ======================================================= */
 
-  async function shareApplicationForm() {
+async function shareApplicationForm() {
 
-    const shareUrl =
-      window.location.href;
+  const shareUrl = window.location.href;
 
-    const shareTitle =
-      "Solicitud de crédito | Arrankar";
+  const shareTitle =
+    "Solicitud de crédito | Arrankar";
 
-    const shareText =
-      `¡Hola! Te escribo porque estoy en el proceso de comprar un vehículo con Arrankar. Para avanzar con la financiación, me sugirieron realizar la precalificación con el apoyo de un familiar que tenga buen historial crediticio.
+  const shareText =
+    `¡Hola! Te escribo porque estoy en el proceso de comprar un vehículo con Arrankar. Para avanzar con la financiación, me sugirieron realizar la precalificación con el apoyo de un familiar que tenga buen historial crediticio.
 
 ¿Me ayudarías diligenciando este formulario rápido? Solo toma 2 minutos y es para evaluar la viabilidad digital:
 
@@ -1146,64 +1145,129 @@ ${shareUrl}
 
 ¡Mil gracias por la ayuda! Me avisas apenas lo mires.`;
 
-    /*
-      En celular, los navegadores compatibles muestran
-      el menú nativo de compartir mediante Web Share API.
+  /*
+    CELULAR:
+    Utilizamos el menú nativo de compartir solamente
+    cuando el dispositivo es móvil/táctil.
 
-      En PC, o cuando Web Share API no está disponible,
-      copiamos el enlace del formulario al portapapeles.
-    */
+    PC:
+    No utilizamos navigator.share porque en Windows
+    puede abrir el menú de compartir del sistema.
+  */
+
+  const isMobile =
+    /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|Mobile/i.test(
+      navigator.userAgent
+    );
+
+  if (
+    isMobile &&
+    navigator.share
+  ) {
 
     try {
 
-      if (
-        navigator.share
-      ) {
+      await navigator.share({
+        title: shareTitle,
+        text: shareText
+      });
 
-        await navigator.share({
-          title: shareTitle,
-          text: shareText
-        });
-
-        return;
-
-      }
+      return;
 
     } catch (error) {
 
       if (
-        error?.name ===
-        "AbortError"
+        error?.name === "AbortError"
       ) {
         return;
       }
 
     }
+  }
 
-    try {
+  /*
+    PC:
+    Copiar directamente el mensaje completo.
+  */
+
+  try {
+
+    if (
+      navigator.clipboard &&
+      navigator.clipboard.writeText
+    ) {
 
       await navigator.clipboard.writeText(
         shareText
       );
 
       alert(
-        "El mensaje para compartir el formulario se copió al portapapeles."
+        "El mensaje para compartir el formulario se copió al portapapeles. Puedes pegarlo directamente en WhatsApp Web, correo o cualquier otra aplicación."
       );
 
-    } catch (error) {
-
-      console.error(
-        "No fue posible compartir o copiar el formulario:",
-        error
-      );
-
-      alert(
-        "No fue posible compartir el formulario. Copia el enlace de esta página y compártelo."
-      );
-
+      return;
     }
 
+  } catch (error) {
+
+    console.error(
+      "Error copiando al portapapeles:",
+      error
+    );
+
   }
+
+  /*
+    Último recurso si el navegador no permite
+    acceder al portapapeles.
+  */
+
+  const textArea =
+    document.createElement("textarea");
+
+  textArea.value =
+    shareText;
+
+  textArea.style.position =
+    "fixed";
+
+  textArea.style.left =
+    "-9999px";
+
+  document.body.appendChild(
+    textArea
+  );
+
+  textArea.focus();
+  textArea.select();
+
+  try {
+
+    document.execCommand(
+      "copy"
+    );
+
+    alert(
+      "El mensaje para compartir el formulario se copió al portapapeles. Puedes pegarlo directamente en WhatsApp Web, correo o cualquier otra aplicación."
+    );
+
+  } catch (error) {
+
+    console.error(
+      "No fue posible copiar el mensaje:",
+      error
+    );
+
+    alert(
+      "No fue posible copiar automáticamente el mensaje. Copia el enlace de esta página y compártelo con tu familiar."
+    );
+
+  }
+
+  document.body.removeChild(
+    textArea
+  );
+}
 
 
   /* =======================================================
